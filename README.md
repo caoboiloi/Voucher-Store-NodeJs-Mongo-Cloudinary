@@ -1,2 +1,2 @@
 # BookStoreNodeJs
-Website Book Store - Nodejs + Angular + CassandraDB or MongoDB
+Website Book Store - Nodejs + MongoDB + Cloudinary
