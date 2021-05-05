@@ -38,6 +38,10 @@ const UserSchema = mongoose.Schema({
 		type: String,
 		required: true,
 	},
+	salary: {
+		type: Number,
+		require: true,
+	},
 	username: {
 		type: String,
 		required: true,

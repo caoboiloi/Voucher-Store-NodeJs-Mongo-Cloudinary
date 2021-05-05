@@ -12,16 +12,38 @@ function authenticateTokenAPI(req, res, next) {
 }
 
 function authenticateToken(req, res, next) {
-    // Gather the jwt access token from the request header
-    const authHeader = req.cookies.token
-    const token = authHeader
-    if (token == null) return res.redirect('/login') // if there isn't any token
-  
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET , (err, user) => {
-      if (err) return res.redirect('/login/logout')
-      next() // pass the execution off to whatever request the client intended
-    })
+    if (req.user && req.user.type == 'Customer') {
+        // Gather the jwt access token from the request header
+        const authHeader = req.cookies.token
+        const token = authHeader
+        if (token == null) return res.redirect('/login') // if there isn't any token
+    
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET , (err, user) => {
+        if (err) return res.redirect('/login/logout')
+        next() // pass the execution off to whatever request the client intended
+        })
+    }else {
+        res.redirect('/login/logout')
+    }
+
 }
+
+function authenticateTokenAdmin(req, res, next) {
+    if (req.user && req.user.type == 'Admin') {
+        // Gather the jwt access token from the request header
+        const authHeader = req.cookies.tokenAdmin
+        const token = authHeader
+        if (token == null) return res.redirect('/22012000/login') // if there isn't any token
+    
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET , (err, user) => {
+        if (err) return res.redirect('/22012000/login/logout')
+        next() // pass the execution off to whatever request the client intended
+        })
+    } else {
+        res.redirect('/22012000/login/logout')
+    }
+}
+
 function generateAccessToken(username) {
     // expires after half and hour (1800 seconds = 30 minutes)
     try {
@@ -44,4 +66,4 @@ function parseCookies (request) {
     return list;
 }
 
-module.exports = {authenticateTokenAPI, authenticateToken, generateAccessToken, parseCookies}
+module.exports = {authenticateTokenAPI, authenticateToken, generateAccessToken, parseCookies, authenticateTokenAdmin}

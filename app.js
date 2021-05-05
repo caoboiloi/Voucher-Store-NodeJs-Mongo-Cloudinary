@@ -19,6 +19,12 @@ var searchRouter = require('./routes/search');
 var paymentRouter = require('./routes/payment');
 var paymentDetailRouter = require('./routes/payment-detail');
 
+// Admin
+var dashboardAdminRouter = require('./routes/admin/dashboard');
+var userAdminRouter = require('./routes/admin/user');
+var tableAdminRouter = require('./routes/admin/table');
+var loginAdminRouter = require('./routes/admin/login');
+
 // Api
 var useApiRouter = require('./routes/api/users')
 var imageUploadApiRouter = require('./routes/api/image-upload')
@@ -90,6 +96,12 @@ app.use('/checkout',checkoutRouter);
 app.use('/search',searchRouter);
 app.use('/payment', paymentRouter);
 app.use('/payment-detail', paymentDetailRouter);
+
+// routes admin
+app.use('/admin/dashboard', dashboardAdminRouter);
+app.use('/admin/user', userAdminRouter);
+app.use('/admin/table', tableAdminRouter);
+app.use('/22012000/login',loginAdminRouter);
 
 // api routes
 app.use('/api/users',useApiRouter);

@@ -23,8 +23,25 @@ async function _onCallbackData(req, username, password, done) {
     }
 }
 
+async function _onCallbackDataAdmin(req, username, password, done) {
+    try {
+        let passwordHash = await hash(password)
+        if(username.trim()==="" || password.trim()===""){
+            return done(null, false,{ message: "Username hoặc password không được để trống" });
+        }
+        let user = await User.findOne({ username: username, password: passwordHash })
+        if (!user || user.type != "Admin")
+            return done(null, false,{ message: "Username hoặc password sai, vui lòng nhập lại" });
+        return done(null, user);
+    } catch (err) {
+        console.error(err)
+    }
+}
+
 module.exports = function (passport) {
     passport.use('local-login', new LocalStrategy(LOCAL_STRATEGY_CONFIG, _onCallbackData));
+
+    passport.use('local-login-admin', new LocalStrategy(LOCAL_STRATEGY_CONFIG, _onCallbackDataAdmin));
 
     passport.serializeUser((user, done) => {
         done(null, user._id)
