@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-var {addBuyAndDeleteCart, getAllBuy, addBuy, updateCancelBuyById} = require('../../controllers/buy.controller')
+var {addBuyAndDeleteCart, getAllBuy, addBuy, updateCancelBuyById, updateReceiveBuyById} = require('../../controllers/buy.controller')
 
 const {purchaseImprove} = require('../../pattern/PurchaseImproveAdapter')
 
@@ -17,5 +17,7 @@ router.post('/add', authenticateToken, buyValidator, addBuy)
 router.post('/adapter', buyValidator, purchaseImprove)
 
 router.put('/cancel', authenticateToken, updateCancelBuyById)
+
+router.put('/receive', authenticateToken, updateReceiveBuyById)
 
 module.exports = router;

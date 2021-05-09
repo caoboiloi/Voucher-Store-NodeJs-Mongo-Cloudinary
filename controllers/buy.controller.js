@@ -195,6 +195,7 @@ async function addBuyAndDeleteCart(req, res, next) {
                     .setCity(city)
                     .setNote(note)
                     .setCancel({check: false})
+                    .setReceive({check: false})
                     .buildInfo()
                     // Original
                     // const query = new Buy ({
@@ -296,4 +297,69 @@ async function updateCancelBuyById(req, res, next) {
     }
 }
 
-module.exports = {addBuyAndDeleteCart, getAllBuy, addBuy, updateCancelBuyById}
+async function updateValidationBuyById(req, res, next) {
+    const {id} = req.body
+    if (!id) {
+        return res.status(500).json({
+            status: false,
+            error: 'Lỗi xảy ra, vui lòng refresh lại trang'
+        })
+    }
+    try {
+        let query = {
+            validation: true
+        }
+        const newBuy = await Buy.findByIdAndUpdate(id, query, {new: true, useFindAndModify: false})
+        if (newBuy !== null || newBuy !== undefined) {
+            res.status(200).json({
+                status: true,
+                message: 'Xác thực đơn hàng thành công',
+                Buy: newBuy
+            })
+        }
+        else {
+            throw new Error(`Lỗi xảy ra, vui lòng thử lại`)
+        }
+    } catch (error) {
+        res.status(500).json({
+            status: false,
+            error: error.message
+        })
+    }
+}
+
+async function updateReceiveBuyById(req, res, next) {
+    const {id} = req.body
+    if (!id) {
+        return res.status(500).json({
+            status: false,
+            error: 'Lỗi xảy ra, vui lòng refresh lại trang'
+        })
+    }
+    try {
+        let query = {
+            receive: {
+                check: true,
+                date: new Date()
+            }
+        }
+        const newBuy = await Buy.findByIdAndUpdate(id, query, {new: true, useFindAndModify: false})
+        if (newBuy !== null || newBuy !== undefined) {
+            res.status(200).json({
+                status: true,
+                message: 'Đã nhận hàng!!!',
+                Buy: newBuy
+            })
+        }
+        else {
+            throw new Error(`Lỗi xảy ra, vui lòng thử lại`)
+        }
+    } catch (error) {
+        res.status(500).json({
+            status: false,
+            error: error.message
+        })
+    }
+}
+
+module.exports = {addBuyAndDeleteCart, getAllBuy, addBuy, updateCancelBuyById, updateValidationBuyById, updateReceiveBuyById}

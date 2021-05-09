@@ -10,6 +10,54 @@ var RGBChange = function () {
 
 /*scroll to top*/
 
+// update receive check for purchase of user
+function updateReceivePurchase(element) {
+    const id = element.dataset.buy
+    console.log(id)
+    fetch('./api/buys/receive', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({id})
+    }).then(res => res.text())
+    .then(data => {
+        data = JSON.parse(data)
+        if (data.status) {
+            var date = new Date(data.Buy.receive.date)
+            $('.paymentDetailPage .order-status').html(`
+            <div class="order-status-false">
+            KHÁCH HÀNG ĐÃ NHẬN HÀNG vào ${moment(date).format('HH:mm')} ngày ${moment(date).format('DD/MM/YYYY')}
+            </div>
+            `)
+            $('.messsageAlertPage #message-alert-show .content').html(data.message)
+            $('.messsageAlertPage #message-alert-show').fadeIn();
+
+            $(".paymentDetailPage #mi-modal").modal('hide');
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
+            setTimeout(() => {
+                $('.messsageAlertPage #message-alert-show').fadeOut();
+            },3000)
+        }
+        else {
+            $('.messsageAlertPage #message-alert-show .content').html(data.error)
+            $('.messsageAlertPage #message-alert-show').fadeIn();
+
+            setTimeout(() => {
+                $('.messsageAlertPage #message-alert-show').fadeOut();
+            },3000)
+        }
+    }).catch(e => {
+        $('.messsageAlertPage #message-alert-show .content').html(e.message)
+        $('.messsageAlertPage #message-alert-show').fadeIn();
+
+        setTimeout(() => {
+            $('.messsageAlertPage #message-alert-show').fadeOut();
+        },3000)
+    })
+}
+
 function getLinkHrefPrice(element) {
     const range = $('.left-sidebar .price-range #amount_range').val()
     element.href = `./search?range=${range}`
@@ -482,7 +530,6 @@ $(document).ready(function () {
         .then(data => {
             data = JSON.parse(data)
             if (data.status) {
-                console.log(data.Buy.cancel.date)
                 var date = new Date(data.Buy.cancel.date)
                 $('.paymentDetailPage .order-status').html(`
                 <div class="order-status-false">

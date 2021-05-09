@@ -10,6 +10,14 @@ const BuySchema = mongoose.Schema({
             type: Date
         }
     },
+    receive: {
+        check: {
+            type: Boolean
+        },
+        date: {
+            type: Date
+        }
+    },
     validation: {
         type: Boolean,
         require: true

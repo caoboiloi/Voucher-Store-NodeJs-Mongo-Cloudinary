@@ -13,7 +13,7 @@
   <%- include ../component/admin/cdn.ejs %>
 </head>
 
-<body class="">
+<body class="dashboardPageAdmin">
   <%- include ../component/admin/sidebar.ejs %>
   <div class="wrapper ">
     <div class="main-panel">
@@ -163,7 +163,7 @@
                         </li>
                         <li class="nav-item">
                           <a class="nav-link" href="#settings" data-toggle="tab">
-                            <i class="material-icons">production_quantity_limits</i> Sản phẩm
+                            <i class="material-icons">production_quantity_limits</i> Đơn hàng bị huỷ
                             <div class="ripple-container"></div>
                           </a>
                         </li>
@@ -176,57 +176,54 @@
                     <div class="tab-pane active" id="profile">
                       <table class="table">
                         <tbody>
-                          <% buys_not_valid.forEach(n => { %>
-                            <tr>
-                              <td>
-                                <div class="form-check">
-                                  <label class="form-check-label">
-                                    <% if (n.validation) { %>
-                                      <input class="form-check-input" type="checkbox" value="" checked>
-                                    <% } else { %>
-                                      <input class="form-check-input" type="checkbox" value="">
-                                    <% } %>
-                                    <span class="form-check-sign">
-                                      <span class="check"></span>
-                                    </span>
-                                  </label>
-                                </div>
-                              </td>
-                              <td>Đơn hàng <%= n._id.toString().substring(0,12) %> - <%= n.totalPrice.toLocaleString() %></td>
-                              <td class="td-actions text-right">
-                                <button type="button" rel="tooltip" title="Edit Task" class="btn btn-primary btn-link btn-sm">
-                                  <i class="material-icons">edit</i>
-                                </button>
-                                <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-link btn-sm">
-                                  <i class="material-icons">close</i>
-                                </button>
-                              </td>
-                            </tr>
-                          <% }) %>
-                        </tbody>
-                      </table>
-                    </div>
-                    <div class="tab-pane" id="messages">
-                      <table class="table">
-                        <tbody>
-                          <% if (revenues.length != 0) { %>
-                            <% revenues.forEach(n => { %>
-                              <tr>
-                                <td>Đơn hàng <%= n._id.toString().substring(0,12) %> - <%= n.totalPrice.toLocaleString() %>
-                                </td>
+                          <% if (buys_not_valid.length != 0) { %>
+                            <% buys_not_valid.forEach(n => { %>
+                              <tr class="not-valid-<%= n._id %>">
+                                <td>Đơn hàng <%= n._id.toString().substring(0,12) %></td>
+                                <td><%= n.totalPrice.toLocaleString() %>đ</td>
                                 <td class="td-actions text-right">
-                                  <button type="button" rel="tooltip" title="Edit Task" class="btn btn-primary btn-link btn-sm">
+                                  <button type="button" rel="tooltip" title="Chỉnh sửa" class="btn btn-primary btn-link btn-sm">
                                     <i class="material-icons">edit</i>
                                   </button>
-                                  <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-link btn-sm">
-                                    <i class="material-icons">close</i>
+                                  <button type="button" rel="tooltip" title="Xác thực" onclick="checkPurchaseForUser(this)" data-buy="<%= n._id %>" class="btn btn-danger btn-link btn-sm">
+                                    <i class="material-icons">done</i>
                                   </button>
                                 </td>
                               </tr>
                             <% }) %>
                           <% } else { %>
                             <tr>
-                              Không có đơn hàng nào !!!
+                              <td>Không có đơn hàng nào !!!</td>
+                            </tr>
+                          <% } %>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="tab-pane" id="messages">
+                      <table class="table">
+                        <tbody class="table-tbody-revenue">
+                          <% if (revenues.length != 0) { %>
+                            <% revenues.forEach(n => { %>
+                              <tr class="revenue-<%= n._id %>">
+                                <td>
+                                  Đơn hàng <%= n._id.toString().substring(0,12) %>
+                                </td>
+                                <td>
+                                  <%= n.totalPrice.toLocaleString() %>đ
+                                </td>
+                                <td class="td-actions text-right">
+                                  <button type="button" rel="tooltip" title="Chỉnh sửa" class="btn btn-primary btn-link btn-sm">
+                                    <i class="material-icons">edit</i>
+                                  </button>
+                                  <button type="button" rel="tooltip" title="Chi tiết" class="btn btn-danger btn-link btn-sm">
+                                    <i class="material-icons">preview</i>
+                                  </button>
+                                </td>
+                              </tr>
+                            <% }) %>
+                          <% } else { %>
+                            <tr>
+                              <td class="not-found-revenue">Không có đơn hàng nào !!!</td>
                             </tr>
                           <% } %>
 
@@ -236,21 +233,23 @@
                     <div class="tab-pane" id="settings">
                       <table class="table">
                         <tbody>
-                          <% products.forEach(p => { %>
+                          <% if (buys_cancel.length != 0) { %>
+                            <% buys_cancel.forEach(p => { %>
+                              <tr class="purchase-cancel-<%= p._id %>">
+                                <td>Đơn hàng <%= p._id.toString().substring(0,12) %> </td>
+                                <td><%= p.totalPrice.toLocaleString() %>đ</td>
+                                <td class="td-actions text-right">
+                                  <button type="button" rel="tooltip" title="Chi tiết" class="btn btn-primary btn-link btn-sm">
+                                    <i class="material-icons">preview</i>
+                                  </button>
+                                </td>
+                              </tr>
+                            <% }) %>
+                          <% } else { %>
                             <tr>
-                              <td><img src="<%= p.image[0] %>" alt="" width="40px"></td>
-                              <td><a href="../../detail?id=<%= p._id %>"><%= p.name %></a></td>
-                              <td><%= p.price.toLocaleString() %></td>
-                              <td class="td-actions text-right">
-                                <button type="button" rel="tooltip" title="Edit Task" class="btn btn-primary btn-link btn-sm">
-                                  <i class="material-icons">edit</i>
-                                </button>
-                                <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-link btn-sm">
-                                  <i class="material-icons">close</i>
-                                </button>
-                              </td>
+                              <td>Không có đơn hàng nào !!!</td>
                             </tr>
-                          <% }) %>
+                          <% } %>
                         </tbody>
                       </table>
                     </div>
@@ -293,13 +292,79 @@
     </div>
   </div>
   <%- include ../component/admin/fixed-plugin.ejs %>
+
+  <%- include ../component/message-alert.ejs %>
   
   <%- include ../component/admin/scripts-fixed-plugin.ejs %>
   <script>
+    function checkPurchaseForUser(element) {
+      const id = element.dataset.buy
+      fetch('../admin/api/buys/validation', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({id})
+      }).then(res => res.text())
+      .then(data => {
+        data = JSON.parse(data)
+        if (data.status) {
+          $(`.dashboardPageAdmin .not-valid-${id}`).remove()
+
+          const checkTemp = $(`.dashboardPageAdmin .table .table-tbody-revenue .not-found-revenue`).html()
+          var temString = `
+          <tr class="revenue-${id}">
+            <td>
+              Đơn hàng ${data.Buy._id.toString().substring(0,12)}
+            </td>
+            <td>
+              ${data.Buy.totalPrice.toLocaleString()}đ
+            </td>
+            <td class="td-actions text-right">
+              <button type="button" rel="tooltip" title="Chỉnh sửa" class="btn btn-primary btn-link btn-sm">
+                <i class="material-icons">edit</i>
+              </button>
+              <button type="button" rel="tooltip" title="Chi tiết" class="btn btn-danger btn-link btn-sm">
+                <i class="material-icons">preview</i>
+              </button>
+            </td>
+          </tr>
+          `
+          if (checkTemp == 'Không có đơn hàng nào !!!') {
+            $(`.dashboardPageAdmin .table .table-tbody-revenue`).html(temString)
+          }
+          else {
+            $(`.dashboardPageAdmin .table .table-tbody-revenue`).append(temString)
+          }
+
+          $('.messsageAlertPage #message-alert-show .content').html(data.message)
+          $('.messsageAlertPage #message-alert-show').fadeIn();
+
+          setTimeout(() => {
+              $('.messsageAlertPage #message-alert-show').fadeOut();
+          },3000)
+        }
+        else {
+          $('.messsageAlertPage #message-alert-show .content').html(data.error)
+          $('.messsageAlertPage #message-alert-show').fadeIn();
+
+          setTimeout(() => {
+              $('.messsageAlertPage #message-alert-show').fadeOut();
+          },3000)
+        }
+      }).catch(e => {
+        $('.messsageAlertPage #message-alert-show .content').html(e.message)
+        $('.messsageAlertPage #message-alert-show').fadeIn();
+
+        setTimeout(() => {
+            $('.messsageAlertPage #message-alert-show').fadeOut();
+        },3000)
+      })
+    }
+
     $(document).ready(function() {
       // Javascript method's body can be found in ../admin/js/demos.js
       md.initDashboardPageCharts();
-
     });
   </script>
 </body>

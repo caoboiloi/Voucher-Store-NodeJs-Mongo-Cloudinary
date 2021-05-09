@@ -10,6 +10,10 @@ function BuyBuilder() {
         this.buy.cancel = cancel;
         return this;
     }
+    this.setReceive = receive => {
+        this.buy.receive = receive;
+        return this;
+    }
     this.setCheck = check => {
         this.buy.check = check;
         return this;

@@ -14,8 +14,8 @@ router.get('/', authenticateTokenAdmin, async (req, res, next) => {
             { $group: { _id: null, totalPrice: { $sum: "$totalPrice" }}}
         ])
     
-        var buys_not_valid = await Buy.find({validation: false}).sort({totalPrice: 'desc'}).limit(5)
-        var products = await Voucher.find().sort({price: 'desc'}).limit(5)
+        var buys_not_valid = await Buy.find({validation: false, 'cancel.check': false}).sort({totalPrice: 'desc'}).limit(5)
+        var buys_cancel = await Buy.find({'cancel.check': true}).sort({totalPrice: 'desc'}).limit(5)
         var revenues = await Buy.find({validation: true}).sort({totalPrice: 'desc'}).limit(5)
     
         var users = await User.find({type: 'Admin'}).select("_id name salary phone")
@@ -27,7 +27,7 @@ router.get('/', authenticateTokenAdmin, async (req, res, next) => {
             vouchers_count,
             users,
             buys_not_valid,
-            products,
+            buys_cancel,
             revenues
         })
     } catch (error) {

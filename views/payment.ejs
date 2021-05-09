@@ -76,9 +76,15 @@
 												</td>
 											<% } %>
 										<% } else { %>
-											<td class="">
-												Đã giao hàng
-											</td>
+											<% if (buy.receive.check) { %>
+												<td class="">
+													Đã nhận hàng
+												</td>
+											<% } else { %>
+												<td class="">
+													Đã giao hàng
+												</td>
+											<% } %>
 										<% } %>
 									</tr>
 								<% }) %>

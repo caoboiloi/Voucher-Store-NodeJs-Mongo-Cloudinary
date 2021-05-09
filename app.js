@@ -34,6 +34,9 @@ var shipperApiRouter = require('./routes/api/shipper')
 var buyApiRouter = require('./routes/api/buys')
 var reviewApiRouter = require('./routes/api/review')
 
+// Api Admin
+var buyAdminApiRouter = require('./routes/admin/api/buys')
+
 // Middleware
 var {getDataLeftSidebar, getDataShipper, getDataRecommend, getDataBanner, getDataTab, getDataFooter} = require('./middleware/variable')
 
@@ -111,6 +114,9 @@ app.use('/api/carts',cartApiRouter);
 app.use('/api/shippers',shipperApiRouter);
 app.use('/api/buys',buyApiRouter);
 app.use('/api/reviews',reviewApiRouter);
+
+// api admin routes
+app.use('/admin/api/buys', buyAdminApiRouter);
 
 
 // // catch 404 and forward to error handler
