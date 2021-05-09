@@ -122,132 +122,59 @@
             <div class="col-md-12">
               <div class="card card-plain">
                 <div class="card-header card-header-primary">
-                  <h4 class="card-title mt-0"> Table on Plain Background</h4>
-                  <p class="card-category"> Here is a subtitle for this table</p>
+                  <h4 class="card-title mt-0"> Danh sách tài khoản khách hàng</h4>
+                  <p class="card-category"> Tên, username, địa chỉ,...</p>
                 </div>
                 <div class="card-body">
                   <div class="table-responsive">
                     <table class="table table-hover">
                       <thead class="">
+                        <th width ="120px" >
+                          Ảnh đại diện
+                        </th>
                         <th>
                           ID
                         </th>
                         <th>
-                          Name
+                          Họ và tên
                         </th>
                         <th>
-                          Country
+                          Địa chỉ
                         </th>
                         <th>
-                          City
+                          Số điện thoại
                         </th>
                         <th>
-                          Salary
+                          Email
                         </th>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>
-                            1
-                          </td>
-                          <td>
-                            Dakota Rice
-                          </td>
-                          <td>
-                            Niger
-                          </td>
-                          <td>
-                            Oud-Turnhout
-                          </td>
-                          <td>
-                            $36,738
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            2
-                          </td>
-                          <td>
-                            Minerva Hooper
-                          </td>
-                          <td>
-                            Curaçao
-                          </td>
-                          <td>
-                            Sinaai-Waas
-                          </td>
-                          <td>
-                            $23,789
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            3
-                          </td>
-                          <td>
-                            Sage Rodriguez
-                          </td>
-                          <td>
-                            Netherlands
-                          </td>
-                          <td>
-                            Baileux
-                          </td>
-                          <td>
-                            $56,142
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            4
-                          </td>
-                          <td>
-                            Philip Chaney
-                          </td>
-                          <td>
-                            Korea, South
-                          </td>
-                          <td>
-                            Overland Park
-                          </td>
-                          <td>
-                            $38,735
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            5
-                          </td>
-                          <td>
-                            Doris Greene
-                          </td>
-                          <td>
-                            Malawi
-                          </td>
-                          <td>
-                            Feldkirchen in Kärnten
-                          </td>
-                          <td>
-                            $63,542
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            6
-                          </td>
-                          <td>
-                            Mason Porter
-                          </td>
-                          <td>
-                            Chile
-                          </td>
-                          <td>
-                            Gloucester
-                          </td>
-                          <td>
-                            $78,615
-                          </td>
-                        </tr>
+                        <% users.forEach(u => { %>
+                          <tr>
+                            <td>
+                              <% if (u.image) { %>
+                                <img src="<%= u.image %>" alt="" width="50px" height="50px">
+                              <% } else { %>
+                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="" width="50px" height="50px">
+                              <% } %>
+                            </td>
+                            <td>
+                              <a href="/admin/customer?id=<%= u._id %>"><%= u._id.toString().substring(0,9) %>...</a>
+                            </td>
+                            <td>
+                              <%= u.name %>
+                            </td>
+                            <td>
+                              <%= u.street %>, <%= u.district %>, <%= u.city %>
+                            </td>
+                            <td>
+                              <%= u.phone %>
+                            </td>
+                            <td>
+                              <%= u.email %>
+                            </td>
+                          </tr>
+                        <% }) %>
                       </tbody>
                     </table>
                   </div>

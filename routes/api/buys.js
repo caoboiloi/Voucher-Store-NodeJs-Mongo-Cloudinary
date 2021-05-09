@@ -1,13 +1,21 @@
 var express = require('express');
 var router = express.Router();
 
-var {addBuy, getAllBuy} = require('../../controllers/buy.controller')
+var {addBuyAndDeleteCart, getAllBuy, addBuy, updateCancelBuyById} = require('../../controllers/buy.controller')
+
+const {purchaseImprove} = require('../../pattern/PurchaseImproveAdapter')
 
 const buyValidator = require('../../validators/buyValidator')
 
 const {authenticateToken} = require('../../config/token')
 
 router.get('/', authenticateToken, getAllBuy)
-router.post('/', authenticateToken, buyValidator, addBuy)
+router.post('/', authenticateToken, buyValidator, addBuyAndDeleteCart)
+router.post('/add', authenticateToken, buyValidator, addBuy)
+
+// Adapter Pattern
+router.post('/adapter', buyValidator, purchaseImprove)
+
+router.put('/cancel', authenticateToken, updateCancelBuyById)
 
 module.exports = router;

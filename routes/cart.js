@@ -9,6 +9,7 @@ router.get('/', authenticateToken,async (req, res, next) => {
     let cookie = req.cookies
     let carts = []
     let totalPrice = 0
+    let idCart = ""
     var {brands, categories} = req.vars
     var {footer} = req.footer
 

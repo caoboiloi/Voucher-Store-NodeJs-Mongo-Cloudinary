@@ -138,20 +138,26 @@
             <!-- <label >Price range:</label> -->
             <h2 for="amount">Mức giá</h2>
             <h2 id="amount" style="text-align: center;">0 VNĐ</h2>
+            <input type="hidden" id="amount_range">
             <!-- <input type="text"  readonly style="border:0; color:#f6931f; font-weight:bold;"> -->
         </p>
         
         <div id="slider-range"></div>
     </div>
 
-    <div class="search-price-range-product">
-        <h4>Tìm kiếm</h4>
-    </div>
+    <a onclick="getLinkHrefPrice(this)">
+        <div class="search-price-range-product">
+            <h4>Tìm kiếm</h4>
+        </div>
+    </a>
+
     <!--/price-range-->
 
     <div class="shipping text-center">
         <!--shipping-->
         <img src="images/home/shipping.jpg" alt="" />
+        <img src="images/home/shipping1.jpg" alt="" />
+        <img src="images/home/shipping2.jpg" alt="" />
     </div>
     <!--/shipping-->
 
@@ -162,10 +168,11 @@
         $(".left-sidebar .price-range #slider-range" ).slider({
             range: true,
             min: 0,
-            max: 100000000
+            max: 50000000
         }).on('slide', function(ev){
             // console.log(ev.value)
             $('.left-sidebar .price-range #amount').html(`${ev.value.toLocaleString()} VNĐ`)
+            $('.left-sidebar .price-range #amount_range').val(ev.value)
         });
     });
 

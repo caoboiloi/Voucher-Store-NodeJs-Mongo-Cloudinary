@@ -13,6 +13,8 @@ const loginValidator = require('../validators/loginValidator')
 
 const User = require('../models/user')
 
+const UserBuilder = require('../pattern/UserBuilder')
+
 const {hash, verify} = require('../config/crypto')
 
 /* GET home page. */
@@ -85,13 +87,20 @@ router.post('/register', registerValidator,async (req, res, next) => {
 		.then(() => {return hash(password)})
 		.then(async passHashed => {
 			// let imgData = img.replace(/^data:image\/\w+;base64,/, "")
-			let user = new User({
-				type: 'Customer',
-				name: name,
-				username: username,
-				password: passHashed,
-				email: email
-			})
+			// let user = new User({
+			// 	type: 'Customer',
+			// 	name: name,
+			// 	username: username,
+			// 	password: passHashed,
+			// 	email: email
+			// })
+			let user = new UserBuilder()
+			.setType('Customer')
+			.setName(name)
+			.setUsername(username)
+			.setPassword(passHashed)
+			.setEmail(email)
+			.buildInfo()
 			if (img !== 'undefined') {
 				let image = {
 					image : img,

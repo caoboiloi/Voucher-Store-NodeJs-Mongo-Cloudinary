@@ -2,6 +2,8 @@ const Cart = require('../models/cart')
 const Voucher = require('../models/voucher')
 const User = require('../models/user')
 
+const CartBuilder = require('../pattern/CartBuilder')
+
 const {validationResult} = require('express-validator')
 
 async function getAllCart(req, res, next) {
@@ -137,16 +139,25 @@ async function addCart(req, res, next) {
                 })
             }
             else {
-                let cart = new Cart({
-                    user,
-                    products: {
-                        voucher,
-                        amount
-                    }
-                })
+                // Original
+                // let cart = new Cart({
+                //     user,
+                //     products: {
+                //         voucher,
+                //         amount
+                //     }
+                // })
                 Voucher.findById(voucher)
                 .then(v => {
-                    cart.totalPrice = v.price * amount
+                    // Builder Pattern
+                    let cart = new CartBuilder()
+                    .setUser(user)
+                    .setProducts({
+                        voucher,
+                        amount
+                    })
+                    .setTotalPrice(v.price * amount)
+                    .buildInfo()
                     return cart.save()
                 })
                 .then(newCart => {
@@ -176,7 +187,7 @@ async function addCart(req, res, next) {
             message = messages[m].msg
             break
         }
-		return res.json({
+		return res.status(500).json({
 			status: false,
 			error: message
 		})
@@ -184,105 +195,158 @@ async function addCart(req, res, next) {
 }
 
 async function deleteOneCart(req, res, next) {
-    const {user, product} = req.body
-    // console.log(product)
-    await Cart.findOne({user: user})
-    .populate("products.voucher")
-    .then(async data => {
-        // console.log(data)
-        var products = data.products
-        var totalPrice = data.totalPrice
-        // console.log("trước:",totalPrice)
-        // console.log(products)
-        products.forEach(p => {
-            // console.log(p._id)
-            if (p._id == product) {
-                totalPrice -= (p.amount * p.voucher.price)
+    let result = validationResult(req)
+    if (result.errors.length === 0) {
+        const {user, product} = req.body
+        // console.log(product)
+        await Cart.findOne({user: user})
+        .populate("products.voucher")
+        .then(async data => {
+            // console.log(data)
+            var products = data.products
+            var totalPrice = data.totalPrice
+            // console.log("trước:",totalPrice)
+            // console.log(products)
+            products.forEach(p => {
+                // console.log(p._id)
+                if (p._id == product) {
+                    totalPrice -= (p.amount * p.voucher.price)
+                }
+            })
+            if (products.length == 1) {
+                totalPrice = 0
             }
+            // console.log("sau:",totalPrice)
+    
+            return await Cart.findOneAndUpdate({user, user}, {
+                totalPrice: totalPrice,
+                $pull: {
+                    products: {_id: product}
+                }
+            }, {new: true, useFindAndModify: false})
+    
         })
-        if (products.length == 1) {
-            totalPrice = 0
+        .then(async newProduct => {
+            res.status(200).json({
+                status: true,
+                message: 'Xoá sản phẩm thành công',
+                Cart: newProduct
+            })
+        })
+        .catch(e => {
+            res.status(500).json({
+                status: false,
+                error: e.message
+            })
+        })
+    }
+    else {
+        let messages = result.mapped()
+        let message = 'error - 404 not found'
+        for (m in messages) {
+            message = messages[m].msg
+            break
         }
-        // console.log("sau:",totalPrice)
-
-        return await Cart.findOneAndUpdate({user, user}, {
-            totalPrice: totalPrice,
-            $pull: {
-                products: {_id: product}
-            }
-        }, {new: true, useFindAndModify: false})
-
-    })
-    .then(async newProduct => {
-        res.status(200).json({
-            status: true,
-            message: 'Xoá sản phẩm thành công',
-            Cart: newProduct
-        })
-    })
-    .catch(e => {
-        res.status(500).json({
-            status: false,
-            error: e.message
-        })
-    })
-
+		return res.status(500).json({
+			status: false,
+			error: message
+		})
+    }
 }
 
 async function updateQuantityItem(req, res, next) {
-    const {user, product, amount} = req.body
-    Cart.findOne({user: user})
-    .populate("products.voucher")
-    .then(dataCart => {
-        dataCart.products.forEach(p => {
-            if (p._id == product) {
-                if (p.amount == 1 & amount < 0) {
-                    res.status(500).json({
-                        status: false,
-                        error: "Số lượng sản phẩm đạt tối thiểu"
-                    })
-                }
-                else {
-                    Cart.findOneAndUpdate({user: user, "products._id": product},{
-                        $inc: {"products.$.amount" : amount}
-                    }, {new: true, useFindAndModify: false}).populate('products.voucher')
-                    .then(async newProduct => {
-                        var totalPrice = newProduct.totalPrice
-                        newProduct.products.forEach(np => {
-                            if (np._id == product) {
-                                if (amount > 0) {
-                                    totalPrice += (np.voucher.price)
-                                }
-                                else if (amount < 0) {
-                                    totalPrice -= (np.voucher.price)
-                                }
-                            }
-                        })
-                        return await Cart.findOneAndUpdate({user: user}, {
-                            totalPrice : totalPrice
-                        }, {new: true, useFindAndModify: false}).populate('products.voucher').exec()
-                    })
-                    .then(newP => {
-                        res.status(200).json({
-                            status: true,
-                            message: 'Cập nhật sản phẩm thành công',
-                            Cart: newP
-                        })
-                    }).catch(e => {
+    let result = validationResult(req)
+    if (result.errors.length === 0) {
+        const {user, product, amount} = req.body
+        Cart.findOne({user: user})
+        .populate("products.voucher")
+        .then(dataCart => {
+            dataCart.products.forEach(p => {
+                if (p._id == product) {
+                    if (p.amount == 1 & amount < 0) {
                         res.status(500).json({
                             status: false,
-                            error: e.message
+                            error: "Số lượng sản phẩm đạt tối thiểu"
                         })
-                    })
+                    }
+                    else {
+                        Cart.findOneAndUpdate({user: user, "products._id": product},{
+                            $inc: {"products.$.amount" : amount}
+                        }, {new: true, useFindAndModify: false}).populate('products.voucher')
+                        .then(async newProduct => {
+                            var totalPrice = newProduct.totalPrice
+                            newProduct.products.forEach(np => {
+                                if (np._id == product) {
+                                    if (amount > 0) {
+                                        totalPrice += (np.voucher.price)
+                                    }
+                                    else if (amount < 0) {
+                                        totalPrice -= (np.voucher.price)
+                                    }
+                                }
+                            })
+                            return await Cart.findOneAndUpdate({user: user}, {
+                                totalPrice : totalPrice
+                            }, {new: true, useFindAndModify: false}).populate('products.voucher').exec()
+                        })
+                        .then(newP => {
+                            res.status(200).json({
+                                status: true,
+                                message: 'Cập nhật sản phẩm thành công',
+                                Cart: newP
+                            })
+                        }).catch(e => {
+                            res.status(500).json({
+                                status: false,
+                                error: e.message
+                            })
+                        })
+                    }
                 }
-            }
+            })
+        }).catch(e => {
+            res.status(500).json({
+                status: false,
+                error: e.message
+            })
         })
-    }).catch(e => {
+    }
+    else {
+        let messages = result.mapped()
+        let message = 'error - 404 not found'
+        for (m in messages) {
+            message = messages[m].msg
+            break
+        }
+		return res.status(500).json({
+			status: false,
+			error: message
+		})
+    }
+
+}
+
+async function deleteAllCartOfUser(req, res, next) {
+    var {cart} = req.body
+    try {
+        var newCart = await Cart.findByIdAndUpdate(cart,{totalPrice: 0, products: []},{new: true, useFindAndModify: false})
+        if (newCart !== null || newCart !== undefined) {
+            res.status(200).json({
+                status: true,
+                message: 'Xoá hết giỏ hàng của user thành công',
+                Cart: newCart
+            })
+        }
+        else {
+            throw new Error(`Lỗi xảy ra, vui lòng thử lại`)
+        }
+    } catch (error) {
         res.status(500).json({
             status: false,
             error: e.message
         })
-    })
+    }
+
 }
 
-module.exports = {getAllCart, addCart, deleteOneCart, updateQuantityItem, getCartById}
+module.exports = {getAllCart, addCart, deleteOneCart, updateQuantityItem, getCartById, deleteAllCartOfUser}

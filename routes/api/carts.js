@@ -1,9 +1,11 @@
 var express = require('express');
 var router = express.Router();
 
-const {getAllCart, addCart, deleteOneCart, updateQuantityItem, getCartById} = require('../../controllers/cart.controller')
+const {getAllCart, addCart, deleteOneCart, updateQuantityItem, getCartById, deleteAllCartOfUser} = require('../../controllers/cart.controller')
 
 const cartValidator = require('../../validators/cartValidator')
+const cartDeleteOneCartValidator = require('../../validators/cartDeleteOneCartValidator')
+const cartUpdateQuantityItemValidator = require('../../validators/cartUpdateQuantityItemValidator')
 
 const {authenticateToken} = require('../../config/token')
 
@@ -14,8 +16,10 @@ router.get('/:id',authenticateToken, getCartById)
 
 router.post('/', authenticateToken, cartValidator, addCart)
 
-router.delete('/', authenticateToken, deleteOneCart)
+router.delete('/', authenticateToken, cartDeleteOneCartValidator, deleteOneCart)
 
-router.put('/quantity', authenticateToken, updateQuantityItem)
+router.put('/quantity', authenticateToken, cartUpdateQuantityItemValidator, updateQuantityItem)
+
+router.delete('/all', authenticateToken, deleteAllCartOfUser)
 
 module.exports = router;

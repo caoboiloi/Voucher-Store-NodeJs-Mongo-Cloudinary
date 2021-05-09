@@ -2,6 +2,14 @@ const mongoose = require('mongoose')
 var passportLocalMongoose = require('passport-local-mongoose');
 
 const BuySchema = mongoose.Schema({
+    cancel: {
+        check: {
+            type: Boolean
+        },
+        date: {
+            type: Date
+        }
+    },
     validation: {
         type: Boolean,
         require: true

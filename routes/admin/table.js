@@ -5,8 +5,9 @@ const {authenticateTokenAdmin} = require('../../config/token')
 const moment = require('moment')
 
 const Buy = require('../../models/buy')
+const User = require('../../models/user')
 
-router.get('/',async (req, res, next) => {
+router.get('/', authenticateTokenAdmin, async (req, res, next) => {
     try {
 
         var buys = await Buy.find().populate({
@@ -18,10 +19,14 @@ router.get('/',async (req, res, next) => {
         })
         .populate('user')
         .exec()
+
+        var users = await User.find({type: 'Customer'})
+
         res.render('admin/table', {
             title: "Danh sách dữ liệu",
             moment,
-            buys
+            buys,
+            users
         })
     } catch (error) {
         res.status(500).json({

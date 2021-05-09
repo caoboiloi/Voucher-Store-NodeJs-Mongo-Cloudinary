@@ -66,9 +66,15 @@
 											<%= (buy.totalPrice + buy.shipper.price).toLocaleString() %>
 										</td>
 										<% if (!buy.validation) { %>
-											<td class="">
-												Đang xác thực
-											</td>
+											<% if (buy.cancel.check) { %>
+												<td class="">
+													Đã huỷ
+												</td>
+											<% } else { %>
+												<td class="">
+													Đang xác thực
+												</td>
+											<% } %>
 										<% } else { %>
 											<td class="">
 												Đã giao hàng

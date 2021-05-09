@@ -48,7 +48,7 @@ async function updateUserId(req, res, next) {
             message = messages[m].msg
             break
         }
-		return res.json({
+		return res.status(500).json({
 			status: false,
 			error: message
 		})

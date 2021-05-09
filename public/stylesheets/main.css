@@ -262,7 +262,6 @@ a#scrollUp i {
     outline: medium none;
     padding-left: 10px;
     width: 155px;
-    background-image: url(../images/home/searchicon.png);
     background-repeat: no-repeat;
     background-position: 130px;
 }
@@ -876,7 +875,7 @@ h2.title {
 }
 
 .product-overlay {
-    background: rgba(254, 152, 15, .8);
+    background: rgba(195, 188, 179, .8);
     top: 0;
     display: none;
     height: 0;

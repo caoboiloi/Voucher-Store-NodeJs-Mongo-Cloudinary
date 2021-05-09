@@ -93,7 +93,6 @@
         background-color: #c47135;
         border: none;
         color: #ffffff;
-        cursor: pointer;
         display: inline-block;
         font-family: 'BenchNine', Arial, sans-serif;
         font-size: 1em;
@@ -105,9 +104,27 @@
         position: relative;
         text-transform: uppercase;
         font-weight: 700;
+        border-radius: 30px;
     }
     .paymentDetailPage .order-status {
         margin: 50px;
+    }
+    .paymentDetailPage .cancel-purchase-order {
+        border: 1px solid;
+        margin-bottom: 30px;
+        padding: 10px;
+        cursor: pointer;
+        border-radius: 20px;
+    }
+    .paymentDetailPage .cancel-purchase-order:hover {
+        background-color: #f1e8e8;
+    }
+    .paymentDetailPage .display-button-cancel-purchase {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-content: center;
+        justify-content: space-around;
     }
 </style>
 </head><!--/head-->
@@ -276,9 +293,36 @@
                             <button class="snip1582">Đã nhận được hàng ?</button>
                         </div>
                     <% } else { %>
-                        <div class="order-status-false">
-                            Đang xác thực
-                        </div>
+                        <% if (buy.cancel.check) { %>
+                            <div class="order-status-false">
+                                Đơn hàng đã bị huỷ vào <%= moment(buy.cancel.date).format('HH:mm') %> ngày <%= moment(buy.cancel.date).format('DD/MM/YYYY') %>
+                            </div>
+                        <% } else { %>
+                            <div class="display-button-cancel-purchase">
+                                <div class="cancel-purchase-order">
+                                    <i class="fas fa-ban"></i> HUỶ ĐƠN HÀNG
+                                </div>
+                            </div>
+    
+                            <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="mi-modal">
+                                <div class="modal-dialog modal-sm">
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                      <h4 class="modal-title" id="myModalLabel">Bạn chắc chắn chứ ?</h4>
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button type="button" class="btn btn-default" id="modal-btn-no">Huỷ bỏ</button>
+                                      <button type="button" class="btn btn-primary" id="modal-btn-yes" data-id="<%= buy._id %>" style="margin: 0px;">Đồng ý</button>
+                                    </div>
+                                  </div>
+                                </div>
+                            </div>
+    
+                            <div class="order-status-false">
+                                Đang xác thực
+                            </div>
+                        <% } %>
                     <% } %>
 
                     <!-- <div class="order-status-false">

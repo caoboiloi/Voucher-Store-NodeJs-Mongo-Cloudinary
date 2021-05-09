@@ -10,9 +10,27 @@ var RGBChange = function () {
 
 /*scroll to top*/
 
+function getLinkHrefPrice(element) {
+    const range = $('.left-sidebar .price-range #amount_range').val()
+    element.href = `./search?range=${range}`
+}
+
+function getLinkSearch(element) {
+    const keyword = $('#header .header-bottom .search_box .keyword_search').val()
+    console.log(keyword)
+    element.href = `./search?keyword=${keyword}`
+}
+
 // pagination - detail product
 
 function paginationDetailProduct(element) {
+    $('.detailPage .review-data').html(`
+    <div class="display-loader-center">
+        <div class="loader-center">
+            <div class="loader"></div>
+        </div>
+    </div>
+    `)
     var pages = document.querySelector('.pagination').dataset.pages
     var page = element.dataset.page
     var voucher = document.querySelector('.detailPage .get-data-review').dataset.voucher
@@ -86,6 +104,13 @@ function paginationDetailProduct(element) {
 // pagination - index
 
 function paginationIndex(element) {
+    $('.indexPage .features_items .pagination-data').html(`
+        <div class="display-loader-center">
+            <div class="loader-center">
+                <div class="loader"></div>
+            </div>
+        </div>`
+    )
     var pages = document.querySelector('.pagination').dataset.pages
     var page = element.dataset.page
     var user = element.dataset.user
@@ -430,6 +455,68 @@ $(document).ready(function () {
             zIndex: 2147483647 // Z-Index for the overlay
         });
     });
+
+    // hiện modal huỷ đơn hàng
+
+    $('.paymentDetailPage .cancel-purchase-order').click(e => {
+        $(".paymentDetailPage #mi-modal").modal('show');
+    })
+
+    $(".paymentDetailPage #mi-modal #modal-btn-no").click(e => {
+        $(".paymentDetailPage #mi-modal").modal('hide');
+    })
+
+    $(".paymentDetailPage #mi-modal #modal-btn-yes").click(e => {
+        const id = e.target.dataset.id
+        console.log(id)
+        let query = {
+            id
+        }
+        fetch('./api/buys/cancel', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(query)
+        }).then(res => res.text())
+        .then(data => {
+            data = JSON.parse(data)
+            if (data.status) {
+                console.log(data.Buy.cancel.date)
+                var date = new Date(data.Buy.cancel.date)
+                $('.paymentDetailPage .order-status').html(`
+                <div class="order-status-false">
+                    Đơn hàng đã bị huỷ vào ${moment(date).format('HH:mm')} ngày ${moment(date).format('DD/MM/YYYY')}
+                </div>
+                `)
+                $('.messsageAlertPage #message-alert-show .content').html(data.message)
+                $('.messsageAlertPage #message-alert-show').fadeIn();
+    
+                $(".paymentDetailPage #mi-modal").modal('hide');
+                $('body').removeClass('modal-open');
+                $('.modal-backdrop').remove();
+                setTimeout(() => {
+                    $('.messsageAlertPage #message-alert-show').fadeOut();
+                },3000)
+            }
+            else {
+                $('.messsageAlertPage #message-alert-show .content').html(data.error)
+                $('.messsageAlertPage #message-alert-show').fadeIn();
+    
+                setTimeout(() => {
+                    $('.messsageAlertPage #message-alert-show').fadeOut();
+                },3000)
+            }
+        })
+        .catch(e => {
+            $('.messsageAlertPage #message-alert-show .content').html(e.message)
+            $('.messsageAlertPage #message-alert-show').fadeIn();
+
+            setTimeout(() => {
+                $('.messsageAlertPage #message-alert-show').fadeOut();
+            },3000)
+        })
+    })
 
     // Đăng nhập
     $('.loginPage #login-button').click(e => {
@@ -861,6 +948,68 @@ $(document).ready(function () {
         }
     })
 
+    // Thêm sản phẩm vào giỏ hàng - search
+
+    $('.searchPage .product-overlay .overlay-content .add-to-cart-show-hover-search').click(e => {
+        $('.messsageAlertPage #message-alert-show .content').html("")
+        const {user,voucher} = e.target.dataset
+        if (user !== "" && voucher !== "" && user && voucher) {
+            let query = {
+                user: user,
+                voucher: voucher,
+                amount : 1
+            }
+            console.log(query)
+            fetch('./api/carts', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(query)
+            }).then(res => res.text())
+            .then(data => {
+                data = JSON.parse(data)
+                // console.log(data)
+                if (data.status) {
+                    $('.messsageAlertPage #message-alert-show .content').html(data.message)
+                }
+                else {
+                    $('.messsageAlertPage #message-alert-show .content').html(data.error)
+                }
+    
+                $('.messsageAlertPage #message-alert-show').fadeIn();
+    
+                setTimeout(() => {
+                    $('.messsageAlertPage #message-alert-show').fadeOut();
+                },3000)
+            }).catch(e => {
+
+                $('.messsageAlertPage #message-alert-show .content').html(e.message)
+                $('.messsageAlertPage #message-alert-show').fadeIn();
+    
+                setTimeout(() => {
+                    $('.messsageAlertPage #message-alert-show').fadeOut();
+                },3000)
+            })
+        }
+        else if (!voucher || voucher == "") {
+            // $('.messsageAlertPage #message-alert-show .main-title').html("Thông báo")
+            $('.messsageAlertPage #message-alert-show .content').html("Xảy ra lỗi, vui lòng refresh lại")
+            $('.messsageAlertPage #message-alert-show').fadeIn();
+    
+            setTimeout(() => {
+                $('.messsageAlertPage #message-alert-show').fadeOut();
+            },3000)
+        }
+        else if (!user || user == "") {
+            $('.messsageAlertPage #message-alert-show .content').html("Vui lòng đăng nhập")
+            $('.messsageAlertPage #message-alert-show').fadeIn();
+    
+            setTimeout(() => {
+                $('.messsageAlertPage #message-alert-show').fadeOut();
+            },3000)
+        }
+    })
 
     // Thêm sản phẩm vào giỏ hàng - product
 
