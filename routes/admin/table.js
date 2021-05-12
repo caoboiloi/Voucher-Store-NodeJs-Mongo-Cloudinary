@@ -7,7 +7,7 @@ const moment = require('moment')
 const Buy = require('../../models/buy')
 const User = require('../../models/user')
 
-router.get('/', authenticateTokenAdmin, async (req, res, next) => {
+router.get('/', async (req, res, next) => {
     try {
 
         var buys = await Buy.find().populate({
@@ -24,6 +24,7 @@ router.get('/', authenticateTokenAdmin, async (req, res, next) => {
 
         res.render('admin/table', {
             title: "Danh sách dữ liệu",
+            name_title: 'table',
             moment,
             buys,
             users

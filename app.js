@@ -24,6 +24,10 @@ var dashboardAdminRouter = require('./routes/admin/dashboard');
 var userAdminRouter = require('./routes/admin/user');
 var tableAdminRouter = require('./routes/admin/table');
 var loginAdminRouter = require('./routes/admin/login');
+var addProductAdminRouter = require('./routes/admin/add-product');
+var addBrandAdminRouter = require('./routes/admin/add-brand');
+var addCategoryAdminRouter = require('./routes/admin/add-category');
+var voucherAdminRouter = require('./routes/admin/vouchers');
 
 // Api
 var useApiRouter = require('./routes/api/users')
@@ -36,6 +40,10 @@ var reviewApiRouter = require('./routes/api/review')
 
 // Api Admin
 var buyAdminApiRouter = require('./routes/admin/api/buys')
+var voucherAdminApiRouter = require('./routes/admin/api/vouches')
+var brandAdminApiRouter = require('./routes/admin/api/brands')
+var categoryAdminApiRouter = require('./routes/admin/api/categories')
+var userAdminApiRouter = require('./routes/admin/api/users')
 
 // Middleware
 var {getDataLeftSidebar, getDataShipper, getDataRecommend, getDataBanner, getDataTab, getDataFooter} = require('./middleware/variable')
@@ -105,6 +113,10 @@ app.use('/admin/dashboard', dashboardAdminRouter);
 app.use('/admin/user', userAdminRouter);
 app.use('/admin/table', tableAdminRouter);
 app.use('/22012000/login',loginAdminRouter);
+app.use('/admin/add-product', addProductAdminRouter);
+app.use('/admin/add-brand', addBrandAdminRouter);
+app.use('/admin/add-category', addCategoryAdminRouter);
+app.use('/admin/vouchers', voucherAdminRouter);
 
 // api routes
 app.use('/api/users',useApiRouter);
@@ -117,6 +129,10 @@ app.use('/api/reviews',reviewApiRouter);
 
 // api admin routes
 app.use('/admin/api/buys', buyAdminApiRouter);
+app.use('/admin/api/vouchers', voucherAdminApiRouter);
+app.use('/admin/api/brands', brandAdminApiRouter);
+app.use('/admin/api/categories', categoryAdminApiRouter);
+app.use('/admin/api/users', userAdminApiRouter);
 
 
 // // catch 404 and forward to error handler

@@ -3,6 +3,10 @@ const Voucher = require('../models/voucher')
 const Brand = require('../models/brand')
 const Category = require('../models/category')
 
+const VoucherBuilder = require('../pattern/VoucherBuilder')
+
+const fetch = require("node-fetch");
+
 const {validationResult} = require('express-validator')
 
 async function getAllVoucher(req, res, next) {
@@ -65,4 +69,80 @@ async function getLimitVoucher(req, res, next) {
     }
 }
 
-module.exports = {getAllVoucher, getLimitVoucher}
+async function addVoucher(req, res, next) {
+    cookie = req.cookies
+    let result = validationResult(req)
+    if (result.errors.length === 0) {
+        var {price, name, brand, category, desc, expirationDate, availability, image} = req.body
+        const imageUrlArray = []
+        const voucher = new VoucherBuilder()
+        .setName(name)
+        .setPrice(price)
+        .setBrand(brand)
+        .setCategory(category)
+        .setDescription(desc)
+        .setExpirationDate(expirationDate)
+        .setAvailability(availability)
+        .buildInfo()
+        for (var i = 0; i < image.length; i++) {
+            let queryImg = {
+                image : image[i],
+                image_name : `${voucher._id}_${i+1}`,
+                folder: `vouchers/${voucher._id}`
+            }
+            const url = await fetch(`${process.env.URL}/api/image-upload`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Cookie': `connect.sid=${cookie['connect.sid']};token=${cookie.token}`
+                },
+                body: JSON.stringify(queryImg)
+            }).then(res => res.text())
+            .then(data => {
+                data = JSON.parse(data)
+                if (data.status) {
+                    return data.result.url
+                }
+            }).catch(error => {
+                return res.status(500).json({
+                    status: false,
+                    error: error.message
+                })
+            })
+            imageUrlArray.push(url)
+        }
+        voucher.image = imageUrlArray
+        try {
+            const newVoucher = voucher.save()
+            if (newVoucher == null || newVoucher == undefined) {
+                throw new Error('Lỗi xảy ra, vui lòng refresh lại trang')
+            }
+            else {
+                res.status(200).json({
+                    status: true,
+                    message: 'Thêm sản phẩm mới thành công',
+                    Voucher: newVoucher
+                })
+            }
+        } catch (error) {
+            return res.status(500).json({
+                status: false,
+                error: error.message
+            })
+        }
+    }
+    else {
+        let messages = result.mapped()
+        let message = 'error - 404 not found'
+        for (m in messages) {
+            message = messages[m].msg
+            break
+        }
+		return res.status(500).json({
+			status: false,
+			error: message
+		})
+    }
+}
+
+module.exports = {getAllVoucher, getLimitVoucher, addVoucher}

@@ -1314,10 +1314,6 @@ $(document).ready(function () {
         })
     })
 
-    $('.messsageAlertPage #message-alert-show .close').click(e => {
-        $('.messsageAlertPage #message-alert-show').fadeOut();
-    })
-
     // Thêm review mới - page detail product
     $('.detailPage .get-data-review').click(e => {
         var name = $('.detailPage #name-review').val()

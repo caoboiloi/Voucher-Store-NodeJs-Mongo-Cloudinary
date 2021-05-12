@@ -1,51 +1,57 @@
-<div class="sidebar" data-color="azure" data-background-color="white" data-image="../admin/image/sidebar-1.jpg">
+<div class="sidebar" data-color="purple" data-background-color="white" data-image="../admin/image/sidebar-1.jpg">
     <!--
       Tip 1: You can change the color of the sidebar using: data-color="purple | azure | green | orange | danger"
 
       Tip 2: you can also add an image using data-image tag
   -->
-    <div class="logo"><a href="http://www.creative-tim.com" class="simple-text logo-normal">
+    <div class="logo"><a href="./dashboard" class="simple-text logo-normal">
         Pandas Voucher
       </a></div>
-    <div class="sidebar-wrapper">
+    <div class="sidebar-wrapper" data-title="<%= name_title %>">
       <ul class="nav">
-        <li class="nav-item active  ">
+        <li class="nav-item " data-title="dashboard">
           <a class="nav-link" href="./dashboard">
             <i class="material-icons">dashboard</i>
             <p>Bảng điều khiển</p>
           </a>
         </li>
-        <li class="nav-item ">
+        <li class="nav-item " data-title="user">
           <a class="nav-link" href="./user">
             <i class="material-icons">person</i>
-            <p>Thông tin</p>
+            <p>Chỉnh sửa thông tin</p>
           </a>
         </li>
-        <li class="nav-item ">
+        <li class="nav-item " data-title="table">
           <a class="nav-link" href="./table">
             <i class="material-icons">content_paste</i>
             <p>Danh sách dữ liệu</p>
           </a>
         </li>
+        <li class="nav-item " data-title="vouchers">
+          <a class="nav-link" href="./vouchers">
+            <i class="material-icons">store</i>
+            <p>Sản phẩm</p>
+          </a>
+        </li>
+        <li class="nav-item " data-title="add-product">
+          <a class="nav-link" href="./add-product">
+            <i class="material-icons">add_shopping_cart</i>
+            <p>Thêm sản phẩm</p>
+          </a>
+        </li>
+        <li class="nav-item " data-title="add-brand">
+          <a class="nav-link" href="./add-brand">
+            <i class="material-icons">storefront</i>
+            <p>Thêm thương hiệu</p>
+          </a>
+        </li>
+        <li class="nav-item " data-title="add-category">
+          <a class="nav-link" href="./add-category">
+            <i class="material-icons">category</i>
+            <p>Thêm nhóm phân loại</p>
+          </a>
+        </li>
         <!-- <li class="nav-item ">
-          <a class="nav-link" href="./typography">
-            <i class="material-icons">library_books</i>
-            <p>Typography</p>
-          </a>
-        </li>
-        <li class="nav-item ">
-          <a class="nav-link" href="./icons">
-            <i class="material-icons">bubble_chart</i>
-            <p>Icons</p>
-          </a>
-        </li>
-        <li class="nav-item ">
-          <a class="nav-link" href="./map">
-            <i class="material-icons">location_ons</i>
-            <p>Maps</p>
-          </a>
-        </li>
-        <li class="nav-item ">
           <a class="nav-link" href="./notifications">
             <i class="material-icons">notifications</i>
             <p>Notifications</p>
@@ -65,4 +71,19 @@
         </li> -->
       </ul>
     </div>
-  </div>
+</div>
+<script>
+  $(document).ready(function() {
+    const arrayLi = $('.sidebar .sidebar-wrapper .nav').find('li')
+    const nameTitle = $('.sidebar .sidebar-wrapper').attr("data-title")
+    for (let index = 0; index < arrayLi.length; index++) {
+      const element = arrayLi[index];
+      if (element.dataset.title == nameTitle) {
+        element.classList.add('active')
+      }
+      else {
+        element.classList.remove('active')
+      }
+    }
+  })
+</script>

@@ -95,21 +95,30 @@
                               <%= (b.totalPrice + b.shipper.price).toLocaleString() %>
                             </td>
                             <% if (b.validation) { %>
-                              <td>
-                                Đã hoàn thành
-                              </td>
-                              <td>
-
-                              </td>
+                              <% if (b.receive.check) { %>
+                                <td>
+                                  Đã nhận hàng
+                                </td>
+                              <% } else { %>
+                                <td>
+                                  Đang giao hàng
+                                </td>
+                              <% } %>
                             <% } else { %>
-                              <td>
-                                Đang xác thực
-                              </td>
-                              <td>
-                                <button type="button" rel="tooltip" title="Xác thực" class="btn btn-primary btn-link btn-sm">
-                                  <i class="material-icons">check</i>
-                                </button>
-                              </td>
+                              <% if (b.cancel.check) { %>
+                                <td>
+                                  Đã huỷ
+                                </td>
+                              <% } else { %>
+                                <td>
+                                  Đang xác thực
+                                </td>
+                                <td>
+                                  <button type="button" rel="tooltip" title="Xác thực" class="btn btn-primary btn-link btn-sm">
+                                    <i class="material-icons">check</i>
+                                  </button>
+                                </td>
+                              <% } %>
                             <% } %>
                           </tr>
                         <% }) %>

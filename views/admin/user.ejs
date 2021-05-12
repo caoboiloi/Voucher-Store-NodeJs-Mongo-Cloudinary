@@ -11,9 +11,58 @@
   </title>
   <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
   <%- include ../component/admin/cdn.ejs %>
+  <style>
+    .userAdminPage #show-message-delay-update-user-admin {
+      display: none;
+    }
+    .userAdminPage .loading-update-user-admin {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      align-content: center;
+      justify-content: space-around;
+    }
+    .userAdminPage .loading-update-user-admin .loader,
+    .userAdminPage .loading-update-user-admin .loader .bar {
+      width: 60px;
+      height: 20px;
+    }
+    .userAdminPage .loading-update-user-admin .loader .bar {
+      position: absolute;
+      display: flex;
+      align-items: center;
+    }
+    .userAdminPage .loading-update-user-admin .loader .bar::before,
+    .userAdminPage .loading-update-user-admin .loader .bar::after {
+      content: "";
+      position: absolute;
+      display: block;
+      width: 10px;
+      height: 10px;
+      background: #9c27b0;
+      background: #9c27b0;
+      opacity: 0;
+      box-shadow: 1px 1px 4px rgba(0,0,0,.15);
+      border-radius: 10px;
+      animation: slideleft 2s ease-in-out infinite;
+    }
+
+    .userAdminPage .loading-update-user-admin .loader .bar1::before { animation-delay: 0.00s }
+    .userAdminPage .loading-update-user-admin .loader .bar1::after  { animation-delay: 0.3s }
+    .userAdminPage .loading-update-user-admin .loader .bar2::before { animation-delay: 0.60s }
+    .userAdminPage .loading-update-user-admin .loader .bar2::after  { animation-delay: 0.90s }
+    .userAdminPage .loading-update-user-admin .loader .bar3::before { animation-delay: 1.20s }
+    .userAdminPage .loading-update-user-admin .loader .bar3::after  { animation-delay: 1.50s }
+
+    @keyframes slideleft {
+      10% { opacity: 0; transform: scale(0); right: 0 }
+      50% { opacity: 1; transform: scale(1) }
+      90% { opacity: 0; transform: scale(0); right: 100% }
+    }
+  </style>
 </head>
 
-<body class="">
+<body class="userAdminPage" data-user="<%= user._id %>">
   <div class="wrapper ">
     <%- include ../component/admin/sidebar.ejs %>
     <div class="main-panel">
@@ -38,38 +87,38 @@
                           <input type="text" class="form-control" disabled>
                         </div>
                       </div>
-                      <div class="col-md-3">
+                      <div class="col-md-7">
                         <div class="form-group">
-                          <label class="bmd-label-floating">Username</label>
-                          <input type="text" class="form-control">
+                          <label class="bmd-label-floating">Địa chỉ email</label>
+                          <input type="email" class="form-control" value="<%= user.email %>" id="email-admin">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="bmd-label-floating">Họ tên của bạn</label>
+                          <input type="text" class="form-control" value="<%= user.name %>" id="name-admin">
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="bmd-label-floating">Facebook, Instagram,...</label>
+                          <input type="text" class="form-control"  value="<%= user.url %>" id="url-admin">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-8">
+                        <div class="form-group">
+                          <label class="bmd-label-floating">Địa chỉ</label>
+                          <input type="text" class="form-control"  value="<%= user.street %>" id="address-admin">
                         </div>
                       </div>
                       <div class="col-md-4">
                         <div class="form-group">
-                          <label class="bmd-label-floating">Địa chỉ email</label>
-                          <input type="email" class="form-control">
-                        </div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label class="bmd-label-floating">Tên của bạn</label>
-                          <input type="text" class="form-control">
-                        </div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label class="bmd-label-floating">Họ của bạn</label>
-                          <input type="text" class="form-control">
-                        </div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-12">
-                        <div class="form-group">
-                          <label class="bmd-label-floating">Địa chỉ</label>
-                          <input type="text" class="form-control">
+                          <label class="bmd-label-floating">Mã bưu chính</label>
+                          <input type="number" class="form-control"  value="<%= user.code %>" id="code-admin">
                         </div>
                       </div>
                     </div>
@@ -77,19 +126,19 @@
                       <div class="col-md-4">
                         <div class="form-group">
                           <label class="bmd-label-floating">Thành phố</label>
-                          <input type="text" class="form-control">
+                          <input type="text" class="form-control"  value="<%= user.city %>" id="city-admin">
                         </div>
                       </div>
                       <div class="col-md-4">
                         <div class="form-group">
-                          <label class="bmd-label-floating">Quận</label>
-                          <input type="text" class="form-control">
+                          <label class="bmd-label-floating">Quận / Thị xã</label>
+                          <input type="text" class="form-control"  value="<%= user.district %>" id="district-admin">
                         </div>
                       </div>
                       <div class="col-md-4">
                         <div class="form-group">
                           <label class="bmd-label-floating">Số điện thoại</label>
-                          <input type="text" class="form-control">
+                          <input type="text" class="form-control"  value="<%= user.phone %>" id="phone-admin">
                         </div>
                       </div>
                     </div>
@@ -99,12 +148,33 @@
                           <label>Giới thiệu</label>
                           <div class="form-group">
                             <label class="bmd-label-floating"> giới thiệu về bản thân...</label>
-                            <textarea class="form-control" rows="5"></textarea>
+                            <textarea class="form-control" rows="5" id="desc-admin"><%= user.desc %></textarea>
                           </div>
                         </div>
                       </div>
                     </div>
-                    <button type="submit" class="btn btn-primary pull-right">Cập nhật thông tin</button>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label class="bmd-label-floating">Xác thực mật khẩu</label>
+                          <input type="password" class="form-control" id="password-admin">
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row" id="show-message-delay-update-user-admin">
+                      <div class="col-md-12 loading-update-user-admin">
+                        <label style="font-size:25px;">Đang xử lý</label>
+                      </div>
+                      <div class="col-md-12 loading-update-user-admin">
+                        <div class="loader">
+                          <div class="bar bar1"></div>
+                          <div class="bar bar2"></div>
+                          <div class="bar bar3"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <button type="button" class="btn btn-primary pull-right" id="btn-update-user-admin">Cập nhật thông tin</button>
                     <div class="clearfix"></div>
                   </form>
                 </div>
@@ -114,16 +184,16 @@
               <div class="card card-profile">
                 <div class="card-avatar">
                   <a href="javascript:;">
-                    <img class="img" src="<%= user.image %>" width="50px" height="50px"/>
+                    <img class="img follow-avatar-admin" src="<%= user.image %>" width="50px" height="50px"/>
                   </a>
                 </div>
                 <div class="card-body">
-                  <h6 class="card-category text-gray"><%= user.email %></h6>
-                  <h4 class="card-title"><%= user.name %></h4>
-                  <p class="card-description">
+                  <h6 class="card-category text-gray follow-email-admin"><%= user.email %></h6>
+                  <h4 class="card-title follow-name-admin"><%= user.name %></h4>
+                  <p class="card-description follow-desc-admin">
                     <%= user.desc %>
                   </p>
-                  <a href="javascript:;" class="btn btn-primary btn-round">Follow Me</a>
+                  <a href="<%= user.url %>" class="btn btn-primary btn-round follow-url-admin">Follow Me</a>
                 </div>
               </div>
             </div>
@@ -135,7 +205,94 @@
   </div>
   <%- include ../component/admin/fixed-plugin.ejs %>
 
+  <%- include ../component/message-alert.ejs %>
+
   <%- include ../component/admin/scripts-fixed-plugin.ejs %>
 </body>
 
 </html>
+<script>
+  $(document).ready(() => {
+    $('.userAdminPage #btn-update-user-admin').on('click', e => {
+      $('.userAdminPage #show-message-delay-update-user-admin').show()
+      const id = document.querySelector('.userAdminPage').dataset.user
+      const name = $('.userAdminPage #name-admin').val()
+      const email = $('.userAdminPage #email-admin').val()
+      const street = $('.userAdminPage #address-admin').val()
+      const url = $('.userAdminPage #url-admin').val()
+      const district = $('.userAdminPage #district-admin').val()
+      const city = $('.userAdminPage #city-admin').val()
+      const phone = $('.userAdminPage #phone-admin').val()
+      const desc = $('.userAdminPage #desc-admin').val()
+      const password = $('.userAdminPage #password-admin').val()
+      const code = $('.userAdminPage #code-admin').val()
+      const query = {
+        name,
+        email,
+        street,
+        district,
+        city,
+        code,
+        phone,
+        desc,
+        url,
+        password
+      }
+
+      fetch(`../admin/api/users/${id}`, {
+      method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(query)
+      }).then(res => res.text())
+      .then(data => {
+        data = JSON.parse(data)
+        if (data.status) {
+
+          $('.userAdminPage .follow-email-admin').html(data.user.email)
+          $('.userAdminPage .follow-name-admin').html(data.user.name)
+          $('.userAdminPage .follow-desc-admin').html(data.user.desc)
+          $('.userAdminPage .follow-url-admin').attr('href', data.user.url)
+
+          $('.messsageAlertPage #message-alert-show .content').html(data.message)
+          $('.messsageAlertPage #message-alert-show').fadeIn();
+
+          setTimeout(() => {
+              $('.messsageAlertPage #message-alert-show').fadeOut();
+          },3000)
+
+          $('.userAdminPage #name-admin').val("")
+          $('.userAdminPage #email-admin').val("")
+          $('.userAdminPage #address-admin').val("")
+          $('.userAdminPage #url-admin').val("")
+          $('.userAdminPage #district-admin').val("")
+          $('.userAdminPage #city-admin').val("")
+          $('.userAdminPage #phone-admin').val()
+          $('.userAdminPage #desc-admin').val("")
+          $('.userAdminPage #password-admin').val("")
+          $('.userAdminPage #code-admin').val("")
+        }
+        else {
+          $('.messsageAlertPage #message-alert-show .content').html(data.error)
+          $('.messsageAlertPage #message-alert-show').fadeIn();
+
+          setTimeout(() => {
+              $('.messsageAlertPage #message-alert-show').fadeOut();
+          },3000)
+        }
+        $('.userAdminPage #show-message-delay-update-user-admin').hide()
+      })
+      .catch(e => {
+        $('.messsageAlertPage #message-alert-show .content').html(e.message)
+        $('.messsageAlertPage #message-alert-show').fadeIn();
+
+        setTimeout(() => {
+            $('.messsageAlertPage #message-alert-show').fadeOut();
+        },3000)
+        
+        $('.userAdminPage #show-message-delay-update-user-admin').hide()
+      })
+    })
+  })
+</script>
