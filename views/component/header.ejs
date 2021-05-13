@@ -4,7 +4,7 @@
         <!--header_top-->
         <div class="container">
             <div class="row">
-                <div class="col-sm-12">
+                <div class="col-sm-10">
                     <div class="contactinfo">
                         <ul class="nav nav-pills">
                             <li><a href="#"><i class="fa fa-phone"></i> +849 72 71 58 56</a></li>
@@ -14,17 +14,21 @@
                         </ul>
                     </div>
                 </div>
-                <!-- <div class="col-sm-6">
+                <div class="col-sm-2">
                     <div class="social-icons pull-right">
                         <ul class="nav navbar-nav">
-                            <li><a href="https://www.facebook.com/a.tun262/"><i class="fa fa-facebook"></i></a></li>
-                            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                            <li><a href="https://www.linkedin.com/in/loihuynh262/"><i class="fa fa-linkedin"></i></a></li>
-                            <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-                            <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+                            <li>
+                                <a href="https://www.facebook.com/a.tun262/"><i class="fab fa-facebook-f"></i></a>
+                            </li>
+                            <li>
+                                <a href="https://www.linkedin.com/in/loihuynh262/"><i class="fab fa-linkedin-in"></i></a>
+                            </li>
+                            <li>
+                                <a href="https://github.com/caoboiloi"><i class="fab fa-github"></i></a>
+                            </li>
                         </ul>
                     </div>
-                </div> -->
+                </div>
             </div>
         </div>
     </div>
@@ -66,7 +70,7 @@
                     <div class="shop-menu clearfix pull-right">
                         <ul class="nav navbar-nav">
                             <% if (locals.user && user.type == 'Customer') { %>
-                                <li><a href="/profile"><i class="fa fa-user"></i> Tài khoản</a></li>
+                                <li><a href="./profile"><i class="fa fa-user"></i> Tài khoản</a></li>
                             <% } %>
                                 <li><a href=""><i class="fa fa-star"></i> Ưa thích</a></li>
                             <% if (locals.user && user.type == 'Customer') { %>
@@ -99,23 +103,27 @@
                     </div>
                     <div class="mainmenu pull-left">
                         <ul class="nav navbar-nav collapse navbar-collapse">
-                            <li><a href="#" class="active">Trang chủ</a></li>
+                            <li><a href="./" class="active">Trang chủ</a></li>
                             <li class="dropdown"><a href="#">Pandas Voucher<i class="fa fa-angle-down"></i></a>
                                 <ul role="menu" class="sub-menu">
-                                    <li><a href="">Sản phẩm</a></li>
-                                    <li><a href="">Thông tin sản phẩm</a></li>
-                                    <li><a href="">Thanh toán</a></li>
-                                    <li><a href="">Giỏ hàng</a></li>
-                                    <li><a href="">Đăng nhập</a></li>
+                                    <% if (locals.user && user.type == 'Customer') { %>
+                                    <li><a href="./profile">Tài khoản</a></li>
+                                    <% } %>
+                                    <% if (locals.user && user.type == 'Customer') { %>
+                                    <li><a href="">Ưa thích</a></li>
+                                    <li><a href="./payment">Thanh toán</a></li>
+                                    <li><a href="./cart">Giỏ hàng</a></li>
+                                    <% } else { %>
+                                        <li><a href="./login">Đăng nhập</a></li>
+                                    <% } %>
                                 </ul>
                             </li>
                             <li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
                                 <ul role="menu" class="sub-menu">
-                                    <li><a href="">Danh sách Blog</a></li>
-                                    <li><a href="">Blog đơn</a></li>
+                                    <li><a href="./blog">Danh sách Blog</a></li>
                                 </ul>
                             </li>
-                            <li><a href="">Liên hệ</a></li>
+                            <li><a href="./contact">Liên hệ</a></li>
                         </ul>
                     </div>
                 </div>

@@ -5,26 +5,25 @@ const Blog = require('../models/blog')
 
 const moment = require('moment')
 
+/* GET home page. */
 router.get('/', async function(req, res, next) {
     try {
-        var {footer} = req.footer
-        var {brands, categories} = req.vars
+        const {id} = req.query
 
-        const blogs = await Blog.find().populate({
-            path: 'user',
+        const singleBlog = await Blog.findById(id).populate({
+            path:'user',
             select: 'name'
         })
 
-        if (blogs.length == 0) {
-            throw new Error('Lỗi xảy ra, vui lòng refresh lại trang')
-        }
-        res.render('blog', {
+        var {footer} = req.footer
+        var {brands, categories} = req.vars
+        res.render('blog-single', {
             user: req.user,
             footer,
             brands,
             categories,
-            blogs,
-            moment
+            moment,
+            singleBlog
         });
     } catch (error) {
         res.render('error')

@@ -13,7 +13,7 @@
   <%- include ../component/admin/cdn.ejs %>
 </head>
 
-<body class="">
+<body class="tablePage">
   <div class="wrapper ">
     <%- include ../component/admin/sidebar.ejs %>
     <div class="main-panel">
@@ -114,7 +114,7 @@
                                   Đang xác thực
                                 </td>
                                 <td>
-                                  <button type="button" rel="tooltip" title="Xác thực" class="btn btn-primary btn-link btn-sm">
+                                  <button type="button" rel="tooltip" title="Xác thực" onclick="checkPurchaseForUser(this)" data-buy="<%= b._id %>" class="btn btn-primary btn-link btn-sm">
                                     <i class="material-icons">check</i>
                                   </button>
                                 </td>
@@ -198,7 +198,47 @@
   </div>
   <%- include ../component/admin/fixed-plugin.ejs %>
 
+  <%- include ../component/message-alert.ejs %>
+
   <%- include ../component/admin/scripts-fixed-plugin.ejs %>
 </body>
+<script>
+function checkPurchaseForUser(element) {
+      const id = element.dataset.buy
+      fetch('../admin/api/buys/validation', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({id})
+      }).then(res => res.text())
+      .then(data => {
+        data = JSON.parse(data)
+        if (data.status) {
+          $('.messsageAlertPage #message-alert-show .content').html(data.message)
+          $('.messsageAlertPage #message-alert-show').fadeIn();
 
+          setTimeout(() => {
+              $('.messsageAlertPage #message-alert-show').fadeOut();
+              location.reload();
+          },1000)
+        }
+        else {
+          $('.messsageAlertPage #message-alert-show .content').html(data.error)
+          $('.messsageAlertPage #message-alert-show').fadeIn();
+
+          setTimeout(() => {
+              $('.messsageAlertPage #message-alert-show').fadeOut();
+          },3000)
+        }
+      }).catch(e => {
+        $('.messsageAlertPage #message-alert-show .content').html(e.message)
+        $('.messsageAlertPage #message-alert-show').fadeIn();
+
+        setTimeout(() => {
+            $('.messsageAlertPage #message-alert-show').fadeOut();
+        },3000)
+      })
+    }
+</script>
 </html>

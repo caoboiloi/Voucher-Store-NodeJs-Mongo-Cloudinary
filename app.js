@@ -18,6 +18,8 @@ var checkoutRouter = require('./routes/checkout');
 var searchRouter = require('./routes/search');
 var paymentRouter = require('./routes/payment');
 var paymentDetailRouter = require('./routes/payment-detail');
+var contactRouter = require('./routes/contact');
+var blogSingleRouter = require('./routes/blog-single');
 
 // Admin
 var dashboardAdminRouter = require('./routes/admin/dashboard');
@@ -37,6 +39,7 @@ var cartApiRouter = require('./routes/api/carts')
 var shipperApiRouter = require('./routes/api/shipper')
 var buyApiRouter = require('./routes/api/buys')
 var reviewApiRouter = require('./routes/api/review')
+var contactApiRouter = require('./routes/api/contact')
 
 // Api Admin
 var buyAdminApiRouter = require('./routes/admin/api/buys')
@@ -107,6 +110,8 @@ app.use('/checkout',checkoutRouter);
 app.use('/search',searchRouter);
 app.use('/payment', paymentRouter);
 app.use('/payment-detail', paymentDetailRouter);
+app.use('/contact', contactRouter);
+app.use('/blog-single', blogSingleRouter);
 
 // routes admin
 app.use('/admin/dashboard', dashboardAdminRouter);
@@ -126,6 +131,7 @@ app.use('/api/carts',cartApiRouter);
 app.use('/api/shippers',shipperApiRouter);
 app.use('/api/buys',buyApiRouter);
 app.use('/api/reviews',reviewApiRouter);
+app.use('/api/contact', contactApiRouter);
 
 // api admin routes
 app.use('/admin/api/buys', buyAdminApiRouter);
