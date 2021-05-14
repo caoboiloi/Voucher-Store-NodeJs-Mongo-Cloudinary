@@ -5,7 +5,9 @@ const Voucher = require('../../models/voucher')
 
 const moment = require('moment')
 
-router.get('/', async (req, res, next) => {
+const {authenticateTokenAdmin} = require('../../config/token')
+
+router.get('/', authenticateTokenAdmin, async (req, res, next) => {
     try {
         const vouchers = await Voucher.find().populate("brand").populate('category')
         res.render('admin/vouchers', {

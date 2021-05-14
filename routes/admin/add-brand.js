@@ -3,7 +3,9 @@ var router = express.Router();
 
 const City = require('../../models/city')
 
-router.get('/',async (req, res, next) => {
+const {authenticateTokenAdmin} = require('../../config/token')
+
+router.get('/', authenticateTokenAdmin, async (req, res, next) => {
     try {
         var cities = await City.find().select('_id name')
 

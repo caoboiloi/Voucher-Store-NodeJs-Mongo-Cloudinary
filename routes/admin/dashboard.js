@@ -7,11 +7,11 @@ const Buy = require('../../models/buy')
 
 const moment = require('moment')
 
-router.get('/', async (req, res, next) => {
+router.get('/', authenticateTokenAdmin, async (req, res, next) => {
     try {
         var vouchers_count = await Voucher.countDocuments()
         var not_valid_buy = await Buy.countDocuments({validation: false, 'cancel.check': false})
-        var valid_buy = await Buy.countDocuments({validation: true})
+        var valid_buy = await Buy.countDocuments({validation: true, 'receive.check': true})
         var sum_price = await Buy.aggregate([
             { $match: { validation: true, 'receive.check': true } },
             { $group: { _id: null , totalPrice: { $sum: "$totalPrice" }}}

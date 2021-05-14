@@ -4,7 +4,9 @@ var router = express.Router();
 const Brand = require('../../models/brand')
 const Category = require('../../models/category')
 
-router.get('/',async (req, res, next) => {
+const {authenticateTokenAdmin} = require('../../config/token')
+
+router.get('/', authenticateTokenAdmin, async (req, res, next) => {
     try {
         const brands = await Brand.find().select('_id name')
         const categories = await Category.find().select('_id name')

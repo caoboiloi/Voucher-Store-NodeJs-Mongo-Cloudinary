@@ -7,7 +7,7 @@ const moment = require('moment')
 const Buy = require('../../models/buy')
 const User = require('../../models/user')
 
-router.get('/', async (req, res, next) => {
+router.get('/', authenticateTokenAdmin, async (req, res, next) => {
     try {
 
         var buys = await Buy.find().populate({

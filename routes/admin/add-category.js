@@ -3,7 +3,9 @@ var router = express.Router();
 
 const Group = require('../../models/group')
 
-router.get('/',async (req, res, next) => {
+const {authenticateTokenAdmin} = require('../../config/token')
+
+router.get('/', authenticateTokenAdmin, async (req, res, next) => {
     try {
         const groups = await Group.find()
 
