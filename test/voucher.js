@@ -17,7 +17,7 @@ describe('Vouchers', function() {
           res.should.have.status(200);  // trả về mã code 200
           res.should.be.json;
           res.body.voucher.should.be.a('array');
-          res.body.voucher.length.should.be.eql(39);
+          res.body.voucher.length.should.be.eql(43);
           done();
         });
     });

@@ -26,7 +26,7 @@ describe('Carts', function() {
                 res.body.should.be.a('object');
                 res.body.Carts.should.be.a('array');
 
-                res.body.Carts.length.should.be.eql(5)
+                res.body.Carts.length.should.be.eql(11)
                 done();
             });
         })
