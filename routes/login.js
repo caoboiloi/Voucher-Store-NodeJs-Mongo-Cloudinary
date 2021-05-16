@@ -1,203 +1,101 @@
-var express = require('express')
-var router = express.Router()
-const passport = require('passport')
-const {ensureGuest} = require('../middleware/authentication')
+var express = require('express');
+var router = express.Router();
+const passport = require('passport');
+//token
+const jwt = require('jsonwebtoken')
 const {generateAccessToken} = require('../config/token')
-const fs = require('fs')
-const multer = require('multer')
-const fetch = require("node-fetch");
-
-const {validationResult} = require('express-validator')
-const registerValidator = require('../validators/registerValidator')
-const loginValidator = require('../validators/loginValidator')
-
+const {
+	ensureGuest
+} = require('../middleware/auth')
+const createError = require("http-errors");
 const User = require('../models/user')
 
-const UserBuilder = require('../pattern/UserBuilder')
 
-const {hash, verify} = require('../config/crypto')
-
-/* GET home page. */
-router.get('/', ensureGuest, async function(req, res, next) {
+/* GET login page. */
+router.get('/', ensureGuest, async function (req, res, next) {
 	res.setHeader('Cache-Control', "max-age=86400")
-	var {brands, categories} = req.vars
-	var {footer} = req.footer
-	res.render('login', {user: req.user, footer, categories, brands});
+	res.render('login', {
+		error: req.flash('loginMessage')
+	});
 });
 
-
-router.post('/', loginValidator, (req, res, next) => {
-	let result = validationResult(req)
-	if (result.errors.length === 0) {
-		passport.authenticate('local-login',{
+router.post('/',(req, res, next) => {
+	passport.authenticate('local-login',{
 			successRedirect: '/',
-			failureRedirect: '/login',
-			failureFlash: true,
+			failureRedirect: '/auth',
+			failureFlash: true,	
 		}, function (err, user, info) {
 		if (err) {
 			return next(err);
 		}
 		if (!user) {
-			return res.status(500).json({
-				status: false,
-				error: info.message
-			})
+			// req.flash('loginMessage', 'Email or password is incorrect')
+			return res.json({error:info.message});
 		}
 		req.logIn(user, function (err) {
 			if (err) {
 				return next(err);
 			}
+			// Tạo 1 token và payload data và response lại với status code là 200 cùng với payloaded data
 			const token = generateAccessToken({ userId: user.id, type:user.type})
-			// console.log(token)
 			res.cookie('token', token)
 			return res.json({token:token});
+			// res.redirect('/')
 		});
-		})(req, res, next);
-	}
-	else {
-		let messages = result.mapped()
-        let message = 'error - 404 not found'
-        for (m in messages) {
-            message = messages[m].msg
-            break
-        }
-		return res.status(500).json({
-			status: false,
-			error: message
-		})
-	}
-})
+	})(req, res, next);
+});
 
-router.post('/register', registerValidator,async (req, res, next) => {
-	let result = validationResult(req)
-	cookie = req.cookies
-	if (result.errors.length === 0) {
-		const {name, username, email, password, img} = req.body
-		await User.findOne({username: username}).then(acc => {
-			if (acc) {
-				throw new Error("Username người dùng đăng ký đã tồn tại")
-			}
-		}).then(async () => {
-			await User.findOne({email: email}).then(acc => {
-				if (acc) {
-					throw new Error("Email người dùng đăng ký đã tồn tại")
-				}
-			})
-		})
-		.then(() => {return hash(password)})
-		.then(async passHashed => {
-			// let imgData = img.replace(/^data:image\/\w+;base64,/, "")
-			// let user = new User({
-			// 	type: 'Customer',
-			// 	name: name,
-			// 	username: username,
-			// 	password: passHashed,
-			// 	email: email
-			// })
-			let user = new UserBuilder()
-			.setType('Customer')
-			.setName(name)
-			.setUsername(username)
-			.setPassword(passHashed)
-			.setEmail(email)
-			.buildInfo()
-			if (img !== 'undefined') {
-				let image = {
-					image : img,
-					image_name : username,
-					folder: 'users'
-				}
-				// let buf = Buffer.from(imgData, 'base64')
-				// fs.writeFileSync(`public/images/user/${username}.png`, buf)
-				// user.image = `images/user/${username}.png`
-				await fetch(`${process.env.URL}/api/image-upload`, {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-						'Cookie': `connect.sid=${cookie['connect.sid']};token=${cookie.token}`
-					},
-					body: JSON.stringify(image)
-				})
-				.then(res => res.text())
-				.then(async data => {
-					data = JSON.parse(data)
-					if (data.status) {
-						user.image = data.result.url
-						return await user.save()
-					}
-				})
-				.then(newAcc => {
-					if (newAcc) {
-						return res.status(500).json({
-							status: true,
-							message: 'Đăng ký người dùng mới thành công',
-							user: {
-								username,
-								email,
-								name
-							}
-						})
-					}
-					else {
-						throw new Error('Đăng ký người dùng mới thất bại')
-					}
-				}).catch(e => {
-					return res.status(500).json({
-						status: false,
-						error: e.message
-					})
-				})
-			}
-			else {
-				user.save()
-				.then(newAcc => {
-					if (newAcc) {
-						return res.status(500).json({
-							status: true,
-							message: 'Đăng ký người dùng mới thành công',
-							user: {
-								username,
-								email,
-								name
-							}
-						})
-					}
-					else {
-						throw new Error('Đăng ký người dùng mới thất bại')
-					}
-				}).catch(e => {
-					return res.status(500).json({
-						status: false,
-						error: e.message
-					})
-				})
-			}
-		})
-		.catch(e => {
-			return res.status(500).json({
-				status: false,
-				error: e.message
-			})
-		})
-	}
-	else {
-        let messages = result.mapped()
-        let message = 'error - 404 not found'
-        for (m in messages) {
-            message = messages[m].msg
-            break
-        }
-		return res.status(500).json({
-			status: false,
-			error: message
-		})
-    }
-})
 
+
+//logout
 router.get('/logout', function (req, res, next) {
 	req.logOut()
-	res.clearCookie('token')
-	res.redirect('/login')
+	res.redirect('/')
 });
+//signin with google
+router.get('/google', passport.authenticate('google', {
+	scope: ['profile', 'email']
+}));
+router.get(
+	'/google/callback',
+	// passport.authenticate('google', {successRedirect:'/', failureRedirect: '/1231232',failureMessage:"email is not valid"}),
+	(req, res, next) => {
+		passport.authenticate('google', function (err, user, info) {
+			if (err) {
+				return next(err);
+			}
+			if (!user) {
+				req.flash('loginMessage', `Email must be TDTU's mail`)
+				return res.redirect('/auth');
+			}
+			req.logIn(user, function (err) {
+
+				if (err) {
+					return next(err);
+				}
+				const token = generateAccessToken({ userId: user.id, type:user.type})
+				res.cookie('token', token)
+				return res.redirect('/');
+			});
+		})(req, res, next);
+	}
+)
+
+// catch 404 and forward to error handler
+router.use(function (req, res, next) {
+	res.render("notfound")
+});
+
+// error handler
+router.use(function (err, req, res, next) {
+	// set locals, only providing error in development
+	res.locals.message = err.message;
+	res.locals.error = req.app.get("env") === "development" ? err : {};
+
+	// render the error page
+	res.status(err.status || 500);
+	res.render("error");
+});
+
 
 module.exports = router;
