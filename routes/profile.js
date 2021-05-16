@@ -1,28 +1,21 @@
 var express = require('express');
 var router = express.Router();
-
 const {authenticateToken} = require('../config/token')
 
-const moment = require('moment')
-
-const userModel = require('../models/user')
-const statusModel = require('../models/status')
-
-router.get('/',authenticateToken,async (req, res, next) => {
-    var {id} = req.query
-    let mainUser = req.user
-    let statusUser = await statusModel.find({user: id})
-    if (id != req.user._id) {
-        mainUser = await userModel.findById(id)
+/* GET users listing. */
+router.get('/', authenticateToken, function(req, res, next) {
+  if (req.user) {
+    var {brands, categories} = req.vars
+    var {footer} = req.footer
+    user = req.user
+    if (user.image === undefined) {
+      user.image = 'https://bootdey.com/img/Content/avatar/avatar1.png'
     }
-    res.render('profile', {
-        user: req.user,
-        mainUser,
-        statusUser,
-        moment
-    })
-})
-router.get("*",function (req, res, next) {
-	res.render("notfound")
+  }
+  else {
+    user = undefined
+  }
+  res.render('profile', {user : user, footer, categories, brands});
 });
-module.exports = router
+
+module.exports = router;
