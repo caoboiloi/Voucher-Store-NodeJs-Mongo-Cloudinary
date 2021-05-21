@@ -10,6 +10,51 @@ var RGBChange = function () {
 
 /*scroll to top*/
 
+// Thêm sản phẩm vào danh sách ưu thích
+function addProductIntoFavorite(element) {
+    const user = element.dataset.user
+    const product = element.dataset.product
+
+    const query = {
+        user,
+        voucher: product
+    }
+
+    fetch('./api/favorites', {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(query)
+    }).then(res => res.text())
+    .then(data => {
+        data = JSON.parse(data)
+        if (data.status) {
+            $('.messsageAlertPage #message-alert-show .content').html(data.message)
+            $('.messsageAlertPage #message-alert-show').fadeIn();
+
+            setTimeout(() => {
+                $('.messsageAlertPage #message-alert-show').fadeOut();
+            },3000)
+        }
+        else {
+            $('.messsageAlertPage #message-alert-show .content').html(data.error)
+            $('.messsageAlertPage #message-alert-show').fadeIn();
+
+            setTimeout(() => {
+                $('.messsageAlertPage #message-alert-show').fadeOut();
+            },3000)
+        }
+    }).catch(e => {
+        $('.messsageAlertPage #message-alert-show .content').html(e.message)
+        $('.messsageAlertPage #message-alert-show').fadeIn();
+
+        setTimeout(() => {
+            $('.messsageAlertPage #message-alert-show').fadeOut();
+        },3000)
+    })
+}
+
 // update receive check for purchase of user
 function updateReceivePurchase(element) {
     const id = element.dataset.buy
@@ -185,10 +230,16 @@ function paginationIndex(element) {
                     var temp = `
                     <a class="btn btn-default add-to-cart add-to-cart-show-hover-main" data-user="${user}" data-voucher="${v._id}"><i class="fa fa-shopping-cart"></i>Thêm vào giỏ hàng</a>
                     `
+                    var tempFavorite = `
+                    <li style="cursor: pointer;" onclick="addProductIntoFavorite(this)" data-user="${user}" data-product="${v._id}"><a><i class="fa fa-plus-square"></i>Ưa thích</a></li>
+                    `
                 }
                 else {
                     var temp = `
                     <a class="btn btn-default add-to-cart add-to-cart-show-hover-main" data-user="" data-voucher="${v._id}"><i class="fa fa-shopping-cart"></i>Thêm vào giỏ hàng</a>
+                    `
+                    var tempFavorite = `
+                    <li style="cursor: pointer;" onclick="addProductIntoFavorite(this)" data-user="" data-product="${v._id}"><a><i class="fa fa-plus-square"></i>Ưa thích</a></li>
                     `
                 }
                 tempString += `
@@ -213,7 +264,7 @@ function paginationIndex(element) {
                         </div>
                         <div class="choose">
                             <ul class="nav nav-pills nav-justified">
-                                <li><a href="#"><i class="fa fa-plus-square"></i>Ưa thích</a></li>
+                                ${tempFavorite}
                                 <li><a href="#"><i class="fa fa-plus-square"></i>So sánh</a></li>
                             </ul>
                         </div>
@@ -1344,37 +1395,6 @@ $(document).ready(function () {
         .then(data => {
             data = JSON.parse(data)
             if (data.status) {
-                var review = data.review
-                var tempString = ""
-                var tempStar = ""
-                for (var i = 1;i <= 5; i++) {
-                    if (i <= review.star) {
-                        tempStar += `<span class="fa fa-star checked-star" style="margin-right:3px"></span>`
-                    }
-                    else {
-                        tempStar += `<span class="fa fa-star" style="margin-right:3px"></span>`
-                    }
-                }
-
-                var date = new Date(review.date)
-                var time = moment(date).format("HH:mm")
-                tempString = `
-                <hr>
-                <div style="margin-top: 20px;">
-                    <ul>
-                        <li><a href=""><i class="fa fa-user"></i>${review.name}</a></li>
-                        <li><a href=""><i class="fa fa-clock-o"></i>${time}</a></li>
-                        <li><a href=""><i class="fa fa-calendar-o"></i>${date.toLocaleDateString('en-GB')}</a></li>
-                    </ul>
-                    <p style="text-align:justify;">${review.review}</p>
-
-                    ${tempStar}
-                </div>
-                `
-                var totalReview = $('.detailPage .totalReview').html()
-                $('.detailPage .totalReview').html(`${parseInt(totalReview) + 1}`)
-                $('.detailPage .review-data').prepend(tempString)
-
                 $('.detailPage #name-review').val("")
                 $('.detailPage #email-review').val("")
                 $('.detailPage .comment-review').val("")

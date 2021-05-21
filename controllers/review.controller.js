@@ -49,7 +49,7 @@ async function addReview(req, res, next) {
 
         res.status(200).json({
             status: true,
-            message: 'Đăng review thành công',
+            message: 'Bài đăng của bạn đang được xác thực, cảm ơn vì đánh giá',
             review: newReview
         })
     }
@@ -67,4 +67,48 @@ async function addReview(req, res, next) {
     }
 }
 
-module.exports = {addReview, getLimitReview}
+async function updateValidateReviewById(req, res, next) {
+    try {
+        const {id} = req.body
+        if (!id) {
+            throw new Error('Lỗi xảy ra, vui lòng refresh lại trang')
+        }
+
+        const newReview = await Review.findByIdAndUpdate(id, {validation: true} , {new: true, useFindAndModify: false})
+        if (newReview == null || newReview == undefined) {
+            throw new Error('Lỗi xảy ra, vui lòng refresh lại trang')
+        }
+        return res.status(200).json({
+            status: true,
+            message: 'Xác thực đánh giá thành công',
+            Review: newReview
+        })
+    } catch (error) {
+        return res.status(500).json({
+            status: false,
+            error: error.message
+        })
+    }
+}
+
+async function deleteReviewById(req, res, next) {
+    try {
+        const {id} = req.params
+
+        await Review.findByIdAndRemove(id, {useFindAndModify: false})
+        .then(() => {
+
+            return res.status(200).json({
+                status: true,
+                message: 'Xoá đánh giá thành công'
+            })
+        })
+    } catch (error) {
+        return res.status(500).json({
+            status: false,
+            error: error.message
+        })
+    }
+}
+
+module.exports = {addReview, getLimitReview, updateValidateReviewById, deleteReviewById}

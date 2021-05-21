@@ -5,6 +5,8 @@ var {addCategoryAndUpdateIntoGroup} = require('../../../controllers/category.con
 
 var categoryValidator = require('../../../validators/categoryValidator')
 
-router.post('/', categoryValidator, addCategoryAndUpdateIntoGroup)
+const {authenticateTokenAdmin} = require('../../../config/token')
+
+router.post('/', authenticateTokenAdmin, categoryValidator, addCategoryAndUpdateIntoGroup)
 
 module.exports = router

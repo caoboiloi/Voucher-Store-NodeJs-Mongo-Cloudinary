@@ -20,6 +20,8 @@ const {hash, verify} = require('../config/crypto')
 /* GET home page. */
 router.get('/', ensureGuest, async function(req, res, next) {
 	res.setHeader('Cache-Control', "max-age=86400")
+	req.logOut()
+	res.clearCookie('token')
 	var {brands, categories} = req.vars
 	var {footer} = req.footer
 	res.render('login', {user: req.user, footer, categories, brands});
@@ -70,7 +72,7 @@ router.post('/', loginValidator, (req, res, next) => {
 
 router.post('/register', registerValidator,async (req, res, next) => {
 	let result = validationResult(req)
-	cookie = req.cookies
+	let cookie = req.cookies
 	if (result.errors.length === 0) {
 		const {name, username, email, password, img} = req.body
 		await User.findOne({username: username}).then(acc => {
@@ -104,8 +106,8 @@ router.post('/register', registerValidator,async (req, res, next) => {
 			if (img !== 'undefined') {
 				let image = {
 					image : img,
-					image_name : username,
-					folder: 'users'
+					image_name : user._id,
+					folder: `users/${user._id}`
 				}
 				// let buf = Buffer.from(imgData, 'base64')
 				// fs.writeFileSync(`public/images/user/${username}.png`, buf)

@@ -17,6 +17,11 @@ const ContactSchema = mongoose.Schema({
     message: {
         type: String,
         require: true
+    },
+    validation: {
+        type: Boolean,
+        require: true,
+        default: false
     }
 })
 

@@ -186,8 +186,14 @@
                             <% buys_not_valid.forEach(n => { %>
                               <tr class="not-valid-<%= n._id %>">
                                 <td>Đơn hàng <%= n._id.toString().substring(0,12) %></td>
-                                <td><%= n.totalPrice.toLocaleString() %>đ</td>
+                                <td><%= (n.totalPrice + n.shipper.price).toLocaleString() %>đ</td>
+                                <td>
+                                  Đặt hàng vào ngày <%= moment(n.orderDate).format('HH:mm - DD/MM/YYYY') %>
+                                </td>
                                 <td class="td-actions text-right">
+                                  <button type="button" rel="tooltip" title="Chi tiết" class="btn btn-primary btn-link btn-sm">
+                                    <a href="./buys?id=<%= n._id %>" target="_blank"><i class="material-icons">preview</i></a>
+                                  </button>
                                   <button type="button" rel="tooltip" title="Chỉnh sửa" class="btn btn-primary btn-link btn-sm">
                                     <i class="material-icons">edit</i>
                                   </button>
@@ -215,14 +221,14 @@
                                   Đơn hàng <%= n._id.toString().substring(0,12) %>
                                 </td>
                                 <td>
-                                  <%= n.totalPrice.toLocaleString() %>đ
+                                  <%= (n.totalPrice + n.shipper.price).toLocaleString() %>đ
                                 </td>
                                 <td>
-                                  Nhận hàng vào <%= moment(n.receive.date).format('HH:mm DD/MM/YYYY') %>
+                                  Nhận hàng vào <%= moment(n.receive.date).format('HH:mm - DD/MM/YYYY') %>
                                 </td>
                                 <td class="td-actions text-right">
                                   <button type="button" rel="tooltip" title="Chi tiết" class="btn btn-danger btn-link btn-sm">
-                                    <i class="material-icons">preview</i>
+                                    <a href="./buys?id=<%= n._id %>" target="_blank"><i class="material-icons">preview</i></a>
                                   </button>
                                 </td>
                               </tr>
@@ -243,13 +249,13 @@
                             <% buys_cancel.forEach(p => { %>
                               <tr class="purchase-cancel-<%= p._id %>">
                                 <td>Đơn hàng <%= p._id.toString().substring(0,12) %> </td>
-                                <td><%= p.totalPrice.toLocaleString() %>đ</td>
+                                <td><%= (p.totalPrice + p.shipper.price).toLocaleString() %>đ</td>
                                 <td>
-                                  Huỷ vào <%= moment(p.cancel.date).format('HH:mm DD/MM/YYYY') %>
+                                  Huỷ vào <%= moment(p.cancel.date).format('HH:mm - DD/MM/YYYY') %>
                                 </td>
                                 <td class="td-actions text-right">
                                   <button type="button" rel="tooltip" title="Chi tiết" class="btn btn-primary btn-link btn-sm">
-                                    <i class="material-icons">preview</i>
+                                    <a href="./buys?id=<%= p._id %>" target="_blank"><i class="material-icons">preview</i></a>
                                   </button>
                                 </td>
                               </tr>
@@ -269,10 +275,10 @@
                             <% buys_receive.forEach(p => { %>
                               <tr class="purchase-receive-<%= p._id %>">
                                 <td>Đơn hàng <%= p._id.toString().substring(0,12) %> </td>
-                                <td><%= p.totalPrice.toLocaleString() %>đ</td>
+                                <td><%= (p.totalPrice + p.shipper.price).toLocaleString() %>đ</td>
                                 <td class="td-actions text-right">
                                   <button type="button" rel="tooltip" title="Chi tiết" class="btn btn-primary btn-link btn-sm">
-                                    <i class="material-icons">preview</i>
+                                    <a href="./buys?id=<%= p._id %>" target="_blank"><i class="material-icons">preview</i></a>
                                   </button>
                                 </td>
                               </tr>

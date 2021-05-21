@@ -21,6 +21,7 @@
     "express-session": "^1.17.1",
     "express-validator": "^6.10.0",
     "http-errors": "^1.6.3",
+    "is-valid-username": "0.0.1",
     "jsonwebtoken": "^8.5.1",
     "mocha": "^8.3.2",
     "moment": "^2.29.1",

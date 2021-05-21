@@ -362,4 +362,29 @@ async function updateReceiveBuyById(req, res, next) {
     }
 }
 
-module.exports = {addBuyAndDeleteCart, getAllBuy, addBuy, updateCancelBuyById, updateValidationBuyById, updateReceiveBuyById}
+async function gerBuyById(req, res, next) {
+    try {
+        const {id} = req.params
+
+        const buy = await Buy.findById(id).populate({
+            path: 'products.voucher',
+            populate: {
+                path: 'brand category'
+            }
+        }).populate('shipper.item')
+        if (buy !== null || buy !== undefined) {
+            res.status(200).json({
+                status: true,
+                message: 'Xuất hoá đơn thành công',
+                Buy: buy
+            })
+        }
+    } catch (error) {
+        res.status(500).json({
+            status: false,
+            error: error.message
+        })
+    }
+}
+
+module.exports = {addBuyAndDeleteCart, getAllBuy, addBuy, updateCancelBuyById, updateValidationBuyById, updateReceiveBuyById, gerBuyById}

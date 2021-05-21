@@ -5,7 +5,15 @@ const Group = require('../../models/group')
 
 const {authenticateTokenAdmin} = require('../../config/token')
 
-router.get('/', authenticateTokenAdmin, async (req, res, next) => {
+const {getDataPermissionUser} = require('../../middleware/variable')
+
+const {validatePermission} = require('../../config/permission')
+router.get('/', authenticateTokenAdmin, getDataPermissionUser, async (req, res, next) => {
+    var {permissions} = req.permission
+    let check = validatePermission('add_new_category_permission', permissions)
+    if (!check) {
+        return res.redirect('/admin/user')
+    }
     try {
         const groups = await Group.find()
 
@@ -16,7 +24,8 @@ router.get('/', authenticateTokenAdmin, async (req, res, next) => {
         res.render('admin/add-category', {
             title: 'Thêm nhóm phân loại mới',
             name_title: 'add-category',
-            groups
+            groups,
+            permissions
         })
     } catch (error) {
         res.render('error')

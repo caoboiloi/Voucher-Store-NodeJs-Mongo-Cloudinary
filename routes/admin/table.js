@@ -5,9 +5,17 @@ const {authenticateTokenAdmin} = require('../../config/token')
 const moment = require('moment')
 
 const Buy = require('../../models/buy')
-const User = require('../../models/user')
 
-router.get('/', authenticateTokenAdmin, async (req, res, next) => {
+const {getDataPermissionUser} = require('../../middleware/variable')
+
+const {validatePermission} = require('../../config/permission')
+
+router.get('/', authenticateTokenAdmin, getDataPermissionUser, async (req, res, next) => {
+    var {permissions} = req.permission
+    let check = validatePermission('buys_permission', permissions)
+    if (!check) {
+        return res.redirect('/admin/user')
+    }
     try {
 
         var buys = await Buy.find().populate({
@@ -20,14 +28,12 @@ router.get('/', authenticateTokenAdmin, async (req, res, next) => {
         .populate('user')
         .exec()
 
-        var users = await User.find({type: 'Customer'})
-
         res.render('admin/table', {
             title: "Danh sách dữ liệu",
             name_title: 'table',
             moment,
             buys,
-            users
+            permissions
         })
     } catch (error) {
         res.status(500).json({

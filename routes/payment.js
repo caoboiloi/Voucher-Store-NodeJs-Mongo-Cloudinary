@@ -3,6 +3,8 @@ var router = express.Router();
 
 const Buy = require('./../models/buy')
 
+const moment = require('moment')
+
 const {authenticateToken} = require('../config/token')
 
 router.get('/', authenticateToken, async (req, res, next) => {
@@ -21,10 +23,10 @@ router.get('/', authenticateToken, async (req, res, next) => {
             }
         }).sort({date: 'desc'})
         if (allBuy.length !== 0) {
-            res.render('payment', {buys: allBuy,user: req.user, recommend,footer,categories,brands})
+            res.render('payment', {buys: allBuy,user: req.user, recommend,footer,categories,brands,moment})
         }
         else {
-            res.render('payment', {buys: [], user: req.user, recommend,footer,categories,brands})
+            res.render('payment', {buys: [], user: req.user, recommend,footer,categories,brands,moment})
         }
     } catch (error) {
         res.status(500).json({

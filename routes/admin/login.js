@@ -11,6 +11,8 @@ const User = require('../../models/user')
 
 router.get('/', ensureAdmin, async function(req, res, next) {
 	res.setHeader('Cache-Control', "max-age=86400")
+	req.logOut()
+	res.clearCookie('token')
 	res.render('admin/login', {user: req.user});
 });
 

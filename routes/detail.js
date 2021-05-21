@@ -34,7 +34,7 @@ router.get('/', async function(req, res, next) {
                 review = []
             }
 
-            var count = await Review.countDocuments({voucher: voucher._id})
+            var count = await Review.countDocuments({voucher: voucher._id, validation: true})
             res.render('detail', {
                 user: req.user,
                 voucher: voucher,

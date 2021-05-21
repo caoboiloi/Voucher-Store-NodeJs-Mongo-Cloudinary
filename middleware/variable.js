@@ -7,6 +7,7 @@ const Recommend = require('../models/recommend')
 const Banner = require('../models/banner')
 const Tab = require('../models/tab')
 const Footer = require('../models/footer')
+const User = require('../models/user')
 
 module.exports = {
     getDataLeftSidebar:async function(req, res, next) {
@@ -129,5 +130,22 @@ module.exports = {
             res.render('error')
             next()
         }
+    },
+
+    getDataPermissionUser: async function(req, res, next) {
+        try {
+            var permissions = await User.findById(req.user._id).populate({
+                path: 'permission',
+                options: {
+                    sort: {num: 1}
+                }
+            }).select('permission')
+            req.permission = {permissions}
+            next()
+        } catch (error) {
+            res.render('error')
+            next()
+        }
+    
     }
 }

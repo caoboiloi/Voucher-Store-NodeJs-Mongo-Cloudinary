@@ -26,6 +26,11 @@ const UserSchema = mongoose.Schema({
 	code: {
 		type: Number
 	},
+	permission: [
+		{
+            type: mongoose.Schema.Types.ObjectId, ref: 'permissions',
+        }
+	],
 	image: {
 		type: String,
 	},
@@ -39,8 +44,7 @@ const UserSchema = mongoose.Schema({
 		required: true,
 	},
 	salary: {
-		type: Number,
-		require: true,
+		type: Number
 	},
 	username: {
 		type: String,

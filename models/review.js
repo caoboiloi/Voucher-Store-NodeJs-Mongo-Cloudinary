@@ -25,6 +25,11 @@ const ReviewSchema = mongoose.Schema({
     date: {
         type: Date,
         require: true
+    },
+    validation: {
+        type: Boolean,
+        require: true,
+        default: false
     }
 })
 

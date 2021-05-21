@@ -68,7 +68,7 @@
 										<% if (!buy.validation) { %>
 											<% if (buy.cancel.check) { %>
 												<td class="">
-													Đã huỷ
+													Đã huỷ vào <%= moment(buy.cancel.date).format('HH:ss - DD:MM:YYYY') %>
 												</td>
 											<% } else { %>
 												<td class="">
@@ -78,7 +78,11 @@
 										<% } else { %>
 											<% if (buy.receive.check) { %>
 												<td class="">
-													Đã nhận hàng
+													Đã nhận hàng vào <%= moment(buy.receive.date).format('HH:ss - DD:MM:YYYY') %>
+												</td>
+											<% } else if (buy.cancel.check) { %>
+												<td class="">
+													Đã huỷ vào <%= moment(buy.cancel.date).format('HH:ss - DD:MM:YYYY') %>
 												</td>
 											<% } else { %>
 												<td class="">

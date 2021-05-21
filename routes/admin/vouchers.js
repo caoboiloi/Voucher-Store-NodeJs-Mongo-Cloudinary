@@ -7,14 +7,25 @@ const moment = require('moment')
 
 const {authenticateTokenAdmin} = require('../../config/token')
 
-router.get('/', authenticateTokenAdmin, async (req, res, next) => {
+const {getDataPermissionUser} = require('../../middleware/variable')
+
+const {validatePermission} = require('../../config/permission')
+
+router.get('/', authenticateTokenAdmin, getDataPermissionUser, async (req, res, next) => {
+    var {permissions} = req.permission
+    let check = validatePermission('products_permission', permissions)
+    if (!check) {
+        return res.redirect('/admin/user')
+    }
     try {
         const vouchers = await Voucher.find().populate("brand").populate('category')
+
         res.render('admin/vouchers', {
             title: 'Thông tin sản phẩm',
             name_title: 'vouchers',
             vouchers,
-            moment
+            moment,
+            permissions
         })
     } catch (error) {
         res.render('error')

@@ -13,7 +13,12 @@ module.exports = [
     check('phone')
     .exists().withMessage('Vui lòng cung cấp số điện thoại')
     .notEmpty().withMessage('Vui lòng nhập số điện thoại')
-    .isLength({min: 6}).withMessage('Số điện thoại không ngắn hơn 9 số'),
+    .custom(value => {
+        if (value.length != 10) {
+            throw new Error('Số điện thoại phải là 10 số')
+        }
+        return true;
+    }),
 
     check('url')
     .exists().withMessage('Vui lòng cung cấp thông tin trang mạng xã hội (FB, Instagram,...)')

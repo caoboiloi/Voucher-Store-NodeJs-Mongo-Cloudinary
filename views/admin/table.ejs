@@ -7,7 +7,7 @@
   <link rel="icon" type="image/png" href="../assets/img/favicon.png">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <title>
-    Admin table | Pandas voucher
+    Admin bill | Pandas voucher
   </title>
   <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
   <%- include ../component/admin/cdn.ejs %>
@@ -60,7 +60,7 @@
                         <th>
                           Tổng hoá đơn
                         </th>
-                        <th colspan="2">
+                        <th colspan="3">
                           Tình trạng
                         </th>
                       </thead>
@@ -68,7 +68,7 @@
                         <% buys.forEach(b => { %>
                           <tr>
                             <td>
-                              <a href="/admin/buys?id=<%= b._id %>"><%= b._id.toString().substring(0,8) %>...</a>
+                              <a href="/admin/buys?id=<%= b._id %>" target="_blank"><%= b._id.toString().substring(0,8) %>...</a>
                             </td>
                             <td>
                               <a href="/admin/customer?id=<%= b.user._id %>"><%= b.user._id.toString().substring(0,8) %>...</a>
@@ -77,10 +77,10 @@
                               <%= b.user.name %>
                             </td>
                             <td>
-                              <%= moment(b.orderDate).format('HH:mm DD/MM/YYYY') %>
+                              <%= moment(b.orderDate).format('HH:mm - DD/MM/YYYY') %>
                             </td>
                             <td>
-                              <%= moment(b.deliveryDate).format('HH:mm DD/MM/YYYY') %>
+                              <%= moment(b.deliveryDate).format('HH:mm - DD/MM/YYYY') %>
                             </td>
                             <td>
                               <%= b.shipper.item.name %>
@@ -97,21 +97,50 @@
                             <% if (b.validation) { %>
                               <% if (b.receive.check) { %>
                                 <td>
-                                  Đã nhận hàng
+                                  Đã nhận hàng <%= moment(b.receive.date).format('HH:ss - DD:MM:YYYY') %>
+                                </td>
+                                <td>
+                                  <button type="button" rel="tooltip" title="Chi tiết" class="btn btn-primary btn-link btn-sm">
+                                    <a href="./buys?id=<%= b._id %>" target="_blank"><i class="material-icons">preview</i></a>
+                                  </button>
+                                </td>
+                              <% } else if (b.cancel.check) { %>
+                                <td>
+                                  Đã huỷ vào <%= moment(b.cancel.date).format('HH:ss - DD:MM:YYYY') %>
+                                </td>
+                                <td>
+                                  <button type="button" rel="tooltip" title="Chi tiết" class="btn btn-primary btn-link btn-sm">
+                                    <a href="./buys?id=<%= b._id %>" target="_blank"><i class="material-icons">preview</i></a>
+                                  </button>
                                 </td>
                               <% } else { %>
                                 <td>
                                   Đang giao hàng
                                 </td>
+                                <td>
+                                  <button type="button" rel="tooltip" title="Chi tiết" class="btn btn-primary btn-link btn-sm">
+                                    <a href="./buys?id=<%= b._id %>" target="_blank"><i class="material-icons">preview</i></a>
+                                  </button>
+                                </td>
                               <% } %>
                             <% } else { %>
                               <% if (b.cancel.check) { %>
                                 <td>
-                                  Đã huỷ
+                                  Đã huỷ vào <%= moment(b.cancel.date).format('HH:ss - DD:MM:YYYY') %>
+                                </td>
+                                <td>
+                                  <button type="button" rel="tooltip" title="Chi tiết" class="btn btn-primary btn-link btn-sm">
+                                    <a href="./buys?id=<%= b._id %>" target="_blank"><i class="material-icons">preview</i></a>
+                                  </button>
                                 </td>
                               <% } else { %>
                                 <td>
                                   Đang xác thực
+                                </td>
+                                <td>
+                                  <button type="button" rel="tooltip" title="Chi tiết" class="btn btn-primary btn-link btn-sm">
+                                    <a href="./buys?id=<%= b._id %>" target="_blank"><i class="material-icons">preview</i></a>
+                                  </button>
                                 </td>
                                 <td>
                                   <button type="button" rel="tooltip" title="Xác thực" onclick="checkPurchaseForUser(this)" data-buy="<%= b._id %>" class="btn btn-primary btn-link btn-sm">
@@ -120,68 +149,6 @@
                                 </td>
                               <% } %>
                             <% } %>
-                          </tr>
-                        <% }) %>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-12">
-              <div class="card card-plain">
-                <div class="card-header card-header-primary">
-                  <h4 class="card-title mt-0"> Danh sách tài khoản khách hàng</h4>
-                  <p class="card-category"> Tên, username, địa chỉ,...</p>
-                </div>
-                <div class="card-body">
-                  <div class="table-responsive">
-                    <table class="table table-hover">
-                      <thead class="">
-                        <th width ="120px" >
-                          Ảnh đại diện
-                        </th>
-                        <th>
-                          ID
-                        </th>
-                        <th>
-                          Họ và tên
-                        </th>
-                        <th>
-                          Địa chỉ
-                        </th>
-                        <th>
-                          Số điện thoại
-                        </th>
-                        <th>
-                          Email
-                        </th>
-                      </thead>
-                      <tbody>
-                        <% users.forEach(u => { %>
-                          <tr>
-                            <td>
-                              <% if (u.image) { %>
-                                <img src="<%= u.image %>" alt="" width="50px" height="50px">
-                              <% } else { %>
-                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="" width="50px" height="50px">
-                              <% } %>
-                            </td>
-                            <td>
-                              <a href="/admin/customer?id=<%= u._id %>"><%= u._id.toString().substring(0,9) %>...</a>
-                            </td>
-                            <td>
-                              <%= u.name %>
-                            </td>
-                            <td>
-                              <%= u.street %>, <%= u.district %>, <%= u.city %>
-                            </td>
-                            <td>
-                              <%= u.phone %>
-                            </td>
-                            <td>
-                              <%= u.email %>
-                            </td>
                           </tr>
                         <% }) %>
                       </tbody>

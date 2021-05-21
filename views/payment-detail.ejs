@@ -293,6 +293,10 @@
                             <div class="order-status-false">
                                 Khách hàng đã nhận hàng vào <%= moment(buy.receive.date).format('HH:mm') %> ngày <%= moment(buy.receive.date).format('DD/MM/YYYY') %>
                             </div>
+                        <% } else if (buy.cancel.check) { %>
+                            <div class="order-status-false">
+                                Đơn hàng đã bị huỷ vào <%= moment(buy.cancel.date).format('HH:mm') %> ngày <%= moment(buy.cancel.date).format('DD/MM/YYYY') %>
+                            </div>
                         <% } else { %>
                             <div style="text-align: center;">
                                 <button class="snip1582" data-buy="<%= buy._id %>" onclick="updateReceivePurchase(this)">Đã nhận được hàng ?</button>

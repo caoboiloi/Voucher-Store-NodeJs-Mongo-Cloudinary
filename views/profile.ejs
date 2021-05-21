@@ -78,7 +78,34 @@
         padding-top: 15px;
         padding-bottom: 15px;
         display: none;
-    }
+        }
+        .profilePage #update-avatar-user-admin-modal .show-image-upload .edit-review-upload-block img.edit-review-upload {
+            width: 200px;
+            height: 200px;
+        }
+        .profilePage #update-avatar-user-admin-modal .show-image-upload .edit-review-upload-block {
+            display:inline-block;
+            margin:5px 20px;
+            padding:5px;
+            border:1px solid #CCC;
+        }
+        .profilePage #update-avatar-user-admin-modal .show-image-upload {
+            width: 100%;
+            text-align:center;
+        }
+        .profilePage #update-avatar-user-admin-modal .cancel-review-img-upload {
+            cursor: pointer;
+        }
+        .profilePage #update-avatar-user-admin-modal .label-for-img-upload-input {
+            display: inline-block;
+            background-color: #FE980F;
+            color: white;
+            padding: 0.5rem;
+            font-family: sans-serif;
+            border-radius: 0.3rem;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -101,6 +128,12 @@
                                     <div class="about">
                                         <h5 class="mb-2 text-primary">Mô tả</h5>
                                         <p class="content-main-desc" style="word-break: break-word;"><%= locals.user.desc %></p>
+                                    </div>
+                                    <div class="about">
+                                        <h5 class="mb-2 text-primary" data-toggle="modal" onclick="handleDataIntoModal(this)" data-id="<%= user._id %>" data-target="#update-avatar-user-admin-modal" style="cursor: pointer;">Thay đổi ảnh đại diện</h5>
+                                    </div>
+                                    <div class="about">
+                                        <h5 class="mb-2 text-primary" data-toggle="modal" onclick="handleDataUpdatePassIntoModal(this)" data-id="<%= user._id %>" data-target="#update-password-user-modal" style="cursor: pointer;">Thay đổi mật khẩu</h5>
                                     </div>
                                 </div>
                             </div>
@@ -311,9 +344,253 @@
         <div class="show-error-message-edit-profile">
 
         </div>
+
+        <div class="modal fade" id="update-avatar-user-admin-modal" role="dialog">
+            <div class="modal-dialog">
+            
+              <!-- Modal content-->
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <h4 class="modal-title">Thay đổi ảnh đại diện người dùng</h4>
+                </div>
+                <div class="modal-body">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <label class="bmd-label-floating">Ảnh đại diện</label>
+                        <div>
+                          <input type="file" id="img-upload-input" hidden accept=".jpg, .jpeg, .png" onchange="readURL(this)" style="opacity: 1; position: initial; display: none;"/>
+                          <label for="img-upload-input" class="label-for-img-upload-input">Chọn hình ảnh đại diện</label>
+                        </div>
+                      </div>
+                      <div class="show-image-upload">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal" onclick="handleCloseImgAvatar(this)">Đóng</button>
+                  <button type="button" class="btn btn-primary" id="btn-update-avatar-user-admin-modal" style="margin-bottom: 16px;">
+                    <i class="fa fa-spinner fa-spin" style="display: none;"></i> Cập nhật
+                  </button>
+                </div>
+              </div>
+              
+            </div>
+        </div>
+
+        <div class="modal fade" id="update-password-user-modal" role="dialog">
+            <div class="modal-dialog">
+            
+              <!-- Modal content-->
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <h4 class="modal-title">Thay đổi mật khẩu</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="card h-100">
+                        <form id="form-edit-profile">
+                            <div class="card-body">
+                                <div class="row gutters">
+                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                        <h6 class="mb-3 text-primary main-title">Mật khẩu</h6>
+                                    </div>
+                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                        <div class="form-group">
+                                            <label for="phone">Mật khẩu cũ</label>
+                                            <input type="password" class="form-control" id="old_password" placeholder="Mật khẩu cũ">
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label for="fullName">Mật khẩu mới</label>
+                                            <input type="password" class="form-control" id="new_password" placeholder="Mật khẩu mới">
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                        <div class="form-group">
+                                            <label for="eMail">Nhập lại mật khẩu</label>
+                                            <input type="password" class="form-control" id="re_password" placeholder="Xác thực mật khẩu">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal" onclick="handleBlockDataInputPass(this)">Đóng</button>
+                  <button type="button" class="btn btn-primary" id="btn-update-password-user-modal" style="margin-bottom: 16px;">
+                    <i class="fa fa-spinner fa-spin" style="display: none;"></i> Cập nhật
+                  </button>
+                </div>
+              </div>
+              
+            </div>
+        </div>
     </div>
 
-
     <%- include component/footer.ejs %>
+
+    <%- include component/message-alert.ejs %>
 </body>
+<script>
+    function handleDataIntoModal(element) {
+        const user = element.dataset.id
+        $('.profilePage #update-avatar-user-admin-modal').attr('data-user', user)
+    }
+    function handleDataUpdatePassIntoModal(element) {
+        const user = element.dataset.id
+        $('.profilePage #update-password-user-modal').attr('data-user', user)
+    }
+    function handleCloseImgAvatar(element) {
+        $('.profilePage .show-image-upload').html("")
+    }
+    function handleBlockDataInputPass(element) {
+        $('.profilePage #update-password-user-modal .modal-body #old_password').val("")
+        $('.profilePage #update-password-user-modal .modal-body #new_password').val("")
+        $('.profilePage #update-password-user-modal .modal-body #re_password').val("")
+    }
+    function readURL(input) {
+        if (input.files) {
+        var filesAmount = input.files.length
+        console.log(filesAmount)
+        for (var i = 0; i < filesAmount; i++) {
+            var reader = new FileReader();
+
+            reader.onload = (event) => {
+            $('.profilePage .show-image-upload').html(`
+            <div class="edit-review-upload-block" onclick="removeImg(this)">
+                <i class="fas fa-times"></i>
+                <img src="${event.target.result}" class="edit-review-upload">
+            </div>
+            `)
+            }
+            reader.readAsDataURL(input.files[i]);
+        }
+        }
+    }
+
+    function removeImg(element) {
+        element.remove()
+        $('#img-upload-input').val("")
+    }
+
+    $(document).ready(() => {
+
+        $('.profilePage #btn-update-password-user-modal').on('click', e => {
+            $('.profilePage #btn-update-password-user-modal i.fa-spinner').show()
+            const id = $('.profilePage #update-password-user-modal').attr('data-user')
+            const old_password = $('.profilePage #update-password-user-modal .modal-body #old_password').val()
+            const new_password = $('.profilePage #update-password-user-modal .modal-body #new_password').val()
+            const re_password = $('.profilePage #update-password-user-modal .modal-body #re_password').val()
+
+            const query = {
+                old_password,
+                new_password,
+                re_password
+            }
+
+            fetch(`./api/users/password/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(query)
+            }).then(res => res.text())
+            .then(data => {
+                data = JSON.parse(data)
+
+                if (data.status) {
+                    $('.profilePage #btn-update-password-user-modal i.fa-spinner').hide()
+
+                    $('.profilePage #update-password-user-modal .modal-body #old_password').val("")
+                    $('.profilePage #update-password-user-modal .modal-body #new_password').val("")
+                    $('.profilePage #update-password-user-modal .modal-body #re_password').val("")
+
+                    $('.profilePage #update-password-user-modal').modal('hide')
+                    $('.messsageAlertPage #message-alert-show .content').html(data.message)
+                    $('.messsageAlertPage #message-alert-show').fadeIn();
+
+                    setTimeout(() => {
+                        $('.messsageAlertPage #message-alert-show').fadeOut();
+                    },1000)
+                }
+                else {
+                    $('.profilePage #btn-update-password-user-modal i.fa-spinner').hide()
+                    $('.messsageAlertPage #message-alert-show .content').html(data.error)
+                    $('.messsageAlertPage #message-alert-show').fadeIn();
+
+                    setTimeout(() => {
+                        $('.messsageAlertPage #message-alert-show').fadeOut();
+                    },3000)
+                }
+            }).catch(e => {
+                $('.profilePage #btn-update-password-user-modal i.fa-spinner').hide()
+                $('.messsageAlertPage #message-alert-show .content').html(e.message)
+                $('.messsageAlertPage #message-alert-show').fadeIn();
+
+                setTimeout(() => {
+                    $('.messsageAlertPage #message-alert-show').fadeOut();
+                },3000)
+            })
+        })
+
+        $('.profilePage #btn-update-avatar-user-admin-modal').on('click', e => {
+
+            $('.profilePage #btn-update-avatar-user-admin-modal i.fa-spinner').show()
+
+            const id =  $('.profilePage #update-avatar-user-admin-modal').attr('data-user')
+            const image = $('.profilePage .show-image-upload .edit-review-upload-block img').attr('src')
+
+            const query = {
+            image
+            }
+
+
+            fetch(`./api/users/image/${id}`,{
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(query)
+            }).then(res => res.text())
+            .then(data => {
+                data = JSON.parse(data)
+                if (data.status) {
+                $('.profilePage #btn-update-avatar-user-admin-modal i.fa-spinner').hide()
+                $('.profilePage #profile .account-settings .user-profile .user-avatar img').attr('src', data.image)
+                $('.profilePage #update-avatar-user-admin-modal').modal('hide')
+                $('.profilePage .show-image-upload').html("")
+
+                $('.messsageAlertPage #message-alert-show .content').html(data.message)
+                $('.messsageAlertPage #message-alert-show').fadeIn();
+
+                setTimeout(() => {
+                    $('.messsageAlertPage #message-alert-show').fadeOut();
+                },700)
+                }
+                else {
+                $('.profilePage #btn-update-avatar-user-admin-modal i.fa-spinner').hide()
+                $('.messsageAlertPage #message-alert-show .content').html(data.error)
+                $('.messsageAlertPage #message-alert-show').fadeIn();
+
+                setTimeout(() => {
+                    $('.messsageAlertPage #message-alert-show').fadeOut();
+                },3000)
+                }
+            }).catch(e => {
+            $('.profilePage #btn-update-avatar-user-admin-modal i.fa-spinner').hide()
+            $('.messsageAlertPage #message-alert-show .content').html(e.message)
+            $('.messsageAlertPage #message-alert-show').fadeIn();
+
+            setTimeout(() => {
+                $('.messsageAlertPage #message-alert-show').fadeOut();
+            },3000)
+            })
+        })
+    })
+</script>
 </html>

@@ -92,8 +92,12 @@
                                             </div>
                                             <div class="choose">
                                                 <ul class="nav nav-pills nav-justified">
-                                                    <li><a href="#"><i class="fa fa-plus-square"></i>Ưa thích</a></li>
-                                                    <li><a href="#"><i class="fa fa-plus-square"></i>So sánh</a></li>
+                                                    <% if (locals.user !== undefined) { %>
+                                                        <li style="cursor: pointer;" onclick="addProductIntoFavorite(this)" data-user="<%= user._id %>" data-product="<%= v._id %>"><a><i class="fa fa-plus-square"></i>Ưa thích</a></li>
+                                                    <% } else { %>
+                                                        <li style="cursor: pointer;" onclick="addProductIntoFavorite(this)" data-user="" data-product="<%= v._id %>"><a><i class="fa fa-plus-square"></i>Ưa thích</a></li>
+                                                    <% } %>
+                                                    <li style="cursor: pointer;"><a><i class="fa fa-plus-square"></i>So sánh</a></li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -145,5 +149,4 @@
     <%- include component/message-alert.ejs %>
 
 </body>
-
 </html>

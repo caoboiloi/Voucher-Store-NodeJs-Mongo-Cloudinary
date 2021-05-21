@@ -5,6 +5,8 @@ var {addBrandAndUpdateIntoCity} = require('../../../controllers/brand.controller
 
 var brandValidator = require('../../../validators/brandValidator')
 
-router.post('/', brandValidator, addBrandAndUpdateIntoCity)
+const {authenticateTokenAdmin} = require('../../../config/token')
+
+router.post('/', authenticateTokenAdmin, brandValidator, addBrandAndUpdateIntoCity)
 
 module.exports = router
