@@ -1,4 +1,4 @@
 # BookStoreNodeJs
-Website Voucher Store - Nodejs + MongoDB + Cloudinary
+Website Voucher Store - Node framework + MongoDB + Cloudinary
 
 Link website: https://huynhloi-pandas.herokuapp.com
