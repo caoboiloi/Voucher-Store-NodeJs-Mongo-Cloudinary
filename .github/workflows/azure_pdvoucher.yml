@@ -10,8 +10,21 @@ on:
   workflow_dispatch:
 
 jobs:
+  # This workflow contains a single job called "build"
+  cypress:
+    # The type of runner that the job will run on
+    runs-on: windows-2019
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Cypress run
+        uses: Cypress-io/github-action@v4.1.0
+        with:
+          start: npm start
   build:
     runs-on: ubuntu-latest
+    need: cypress
 
     steps:
       - uses: actions/checkout@v2
@@ -32,23 +45,9 @@ jobs:
         with:
           name: node-app
           path: .
-
-  # This workflow contains a single job called "build"
-  run-cypress:
-    # The type of runner that the job will run on
-    runs-on: windows-2019
-    needs: build
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - name: Cypress run
-        uses: Cypress-io/github-action@v4.1.0
-        with:
-          start: npm start
-
   deploy:
     runs-on: ubuntu-latest
-    needs: run-cypress
+    needs: build
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
