@@ -34,7 +34,6 @@ jobs:
           envkey_USER_CUSTOMER_CYPRESS: ${{ secrets.USER_CUSTOMER_CYPRESS }}
           envkey_PASS_CUSTOMER_CYPRESS: ${{ secrets.PASS_CUSTOMER_CYPRESS }}
           envkey_PROJECT_ID: ${{ secrets.PROJECT_ID }}
-          envkey_CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
       - name: Cypress run
         uses: cypress-io/github-action@v4
         with:
@@ -44,6 +43,8 @@ jobs:
           wait-on: ${{ secrets.URL }}
           wait-on-timeout: 120
           record: true
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
 
   build:
     runs-on: ubuntu-latest
