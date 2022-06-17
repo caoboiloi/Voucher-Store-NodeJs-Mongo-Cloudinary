@@ -6,6 +6,7 @@ describe('Login with created account', () => {
     cy.fixture('user.json').as('user');
 
     cy.visit(Cypress.env('login'));
+    cy.wait(3000);
   });
 
 
