@@ -37,6 +37,8 @@ jobs:
         uses: cypress-io/github-action@v4
         with:
           start: npm start
+          browser: chrome
+          headed: true
 
   # build:
   #   runs-on: ubuntu-latest
