@@ -13,7 +13,7 @@ module.exports = defineConfig({
   pageLoadTimeout: 30000,
   responseTimeout: 30000,
   requestTimeout: 30000,
-  projectId: "5nzrh3",
+  projectId: process.env.PROJECT_ID,
   env: {
     user_admin: process.env.USER_ADMIN_CYPRESS,
     pass_admin: process.env.PASS_ADMIN_CYPRESS,
